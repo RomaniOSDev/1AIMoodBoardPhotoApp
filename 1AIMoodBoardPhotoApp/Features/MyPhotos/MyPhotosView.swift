@@ -13,33 +13,39 @@ struct MyPhotosView: View {
     @StateObject private var viewModel = MyPhotosViewModel()
     @State private var selectedPhoto: GeneratedPhoto?
 
-    private let columns = [GridItem(.adaptive(minimum: 110), spacing: 8)]
+    private let columns = [
+        GridItem(.flexible(), spacing: 12),
+        GridItem(.flexible(), spacing: 12)
+    ]
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 8) {
-                    ForEach(viewModel.photos, id: \.id) { photo in
-                        PhotoThumbnail(
-                            photo: photo,
-                            repository: dependencies.repository(context: modelContext)
-                        )
-                        .aspectRatio(3 / 4, contentMode: .fill)
-                        .clipped()
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .onTapGesture {
-                            selectedPhoto = photo
-                        }
-                    }
-                }
-                .padding(8)
-            }
-            .navigationTitle("My Photos")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
+            VStack {
+                HStack {
+                    Text("My Photos")
+                        .font(.system(size: 32, weight: .bold, design: .monospaced))
+
+                    Spacer()
+
                     BananaToolbarTrailing()
                 }
+
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 12) {
+                        ForEach(viewModel.photos, id: \.id) { photo in
+                            PhotoThumbnail(
+                                photo: photo,
+                                repository: dependencies.repository(context: modelContext)
+                            )
+                            .onTapGesture {
+                                selectedPhoto = photo
+                            }
+                        }
+                    }
+                    .padding(12)
+                }
             }
+            .padding()
             .overlay {
                 if viewModel.photos.isEmpty {
                     ContentUnavailableView("No photos yet", systemImage: "photo.on.rectangle.angled")
@@ -75,12 +81,27 @@ private struct PhotoThumbnail: View {
 
     var body: some View {
         let url = repository.absoluteURL(for: photo)
-        if let ui = UIImage(contentsOfFile: url.path) {
-            Image(uiImage: ui)
-                .resizable()
-                .scaledToFill()
-        } else {
-            Color.gray.opacity(0.3)
+        VStack(alignment: .leading, spacing: 8) {
+            if let ui = UIImage(contentsOfFile: url.path) {
+                Image(uiImage: ui)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(3 / 4, contentMode: .fit)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else {
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(maxWidth: .infinity)
+                    .aspectRatio(3 / 4, contentMode: .fit)
+            }
+
+            Text(photo.session?.shootTitle ?? "Untitled prompt")
+                .font(.caption.weight(.medium))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
         }
     }
 }

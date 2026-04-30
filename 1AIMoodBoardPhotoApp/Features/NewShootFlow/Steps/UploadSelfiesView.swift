@@ -11,8 +11,6 @@ struct UploadSelfiesView: View {
     @ObservedObject var coordinator: NewShootCoordinator
 
     @StateObject private var viewModel = UploadSelfiesViewModel()
-    @State private var selectedVibe: VibePreset?
-
     private let tipLines = [
         "No sunglasses or heavy makeup",
         "Face clearly visible",
@@ -21,55 +19,15 @@ struct UploadSelfiesView: View {
     ]
 
     private var canContinue: Bool {
-        viewModel.hasPhoto && selectedVibe != nil
+        viewModel.hasPhoto
     }
-
-    private let vibeColumns = [GridItem(.flexible()), GridItem(.flexible())]
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
                 titleBlock
 
-                Text("Photo")
-                    .font(.headline)
-
                 photoSlot
-
-                Text("Your vibe:")
-                    .font(.headline)
-
-                LazyVGrid(columns: vibeColumns, spacing: 12) {
-                    ForEach(VibePreset.allCases) { preset in
-                        Button {
-                            selectedVibe = preset
-                        } label: {
-                            Text(preset.rawValue)
-                                .font(.subheadline.weight(.medium))
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding(.vertical, 14)
-                                .frame(maxWidth: .infinity)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(selectedVibe == preset ? Color.accentColor.opacity(0.18) : Color(.secondarySystemBackground))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .strokeBorder(selectedVibe == preset ? Color.accentColor : Color.clear, lineWidth: 2)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Name this shoot (optional)")
-                        .font(.subheadline.weight(.medium))
-                    TextField("e.g. Summer in Paris", text: $coordinator.shootTitleDraft)
-                        .textFieldStyle(.roundedBorder)
-                        .textInputAutocapitalization(.words)
-                }
 
                 tipsCard
             }
@@ -94,15 +52,11 @@ struct UploadSelfiesView: View {
         .safeAreaInset(edge: .bottom) {
             Button {
                 coordinator.selfieImages = viewModel.images
-                coordinator.selectedVibe = selectedVibe
-                coordinator.push(.processing)
+                coordinator.push(.styleSelection)
             } label: {
-                Text("Continue")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
+                CustomButtonView(text: "Continue")
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(.plain)
             .disabled(!canContinue)
             .padding()
             .background(.ultraThinMaterial)
@@ -112,17 +66,14 @@ struct UploadSelfiesView: View {
                 viewModel.addImages(picked)
             }
         }
-        .onAppear {
-            selectedVibe = coordinator.selectedVibe
-        }
     }
 
     private var titleBlock: some View {
         VStack(spacing: 8) {
-            Text("Upload photo")
+            Text("Выбор фото")
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
-            Text("of yourself")
+            Text("Add one clear selfie")
                 .font(.title2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

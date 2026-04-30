@@ -29,8 +29,8 @@ final class ProfileViewModel: ObservableObject {
 
     func restore(dependencies: AppDependencies) async {
         do {
-            try await dependencies.storeKitManager.restorePurchases(bananaManager: dependencies.bananaManager)
-            restoreMessage = "Restore finished. Purchases sync with App Store."
+            try await dependencies.storeKitManager.restorePurchases()
+            restoreMessage = "Sync finished. For consumables (bananas), automatic restore is limited by Apple policy."
             showRestoreAlert = true
         } catch {
             restoreMessage = error.localizedDescription

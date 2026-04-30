@@ -67,7 +67,8 @@ final class ProcessingViewModel: ObservableObject {
 
             let url = try await dependencies.aiService.generateShoot(
                 selfieImages: coordinator.selfieImages,
-                vibe: coordinator.selectedVibe
+                stylePreset: coordinator.selectedVibe,
+                referenceImage: coordinator.referenceStyleImage
             )
 
             message = .almost

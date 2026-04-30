@@ -14,10 +14,9 @@ final class GalleryResultViewModel: ObservableObject {
     @Published var errorMessage = ""
     @Published var didPersistToSwiftData = false
 
-    func saveToMyPhotosAndLibrary(
+    func saveSessionIfNeeded(
         localURL: URL,
         repository: ShootRepository,
-        image: UIImage?,
         shootTitle: String?
     ) async {
         do {
@@ -26,6 +25,15 @@ final class GalleryResultViewModel: ObservableObject {
                 didPersistToSwiftData = true
                 print("[GalleryResult] saved SwiftData")
             }
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+            print("[GalleryResult] save session error: \(error)")
+        }
+    }
+
+    func saveToPhotoLibrary(image: UIImage?) async {
+        do {
             guard let image else {
                 throw NSError(domain: "Gallery", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing image"])
             }
@@ -35,7 +43,7 @@ final class GalleryResultViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
             showError = true
-            print("[GalleryResult] save error: \(error)")
+            print("[GalleryResult] save library error: \(error)")
         }
     }
 }

@@ -32,10 +32,14 @@ actor AIService {
 
     // MARK: - Public API
 
-    nonisolated static func buildPrompt(vibe: VibePreset) -> String {
-        """
-        The input is one person in everyday clothing. Generate a NEW vertical lifestyle photograph (9:16) of the same individual — keep face and overall likeness consistent; fully clothed, modest styling. Creative direction: \(vibe.promptFragment) Clean composition, relaxed pose, crisp detail. No text, logos, or watermarks.
-        """
+    nonisolated static func buildPrompt(stylePreset: VibePreset?, hasReferenceImage: Bool) -> String {
+        let base =
+            "The first image is one person in everyday clothing. Generate a NEW vertical lifestyle photograph (9:16) of the same individual; keep face and overall likeness consistent; fully clothed, modest styling."
+        let style = stylePreset.map { "Style direction: \($0.promptFragment)" } ?? "Style direction: modern, clean lifestyle portrait."
+        let ref = hasReferenceImage ? "If a second image is provided, use it only as visual style reference (colors, mood, outfit direction), not identity." : ""
+        return [base, style, ref, "Clean composition, relaxed pose, crisp detail. No text, logos, or watermarks."]
+            .filter { !$0.isEmpty }
+            .joined(separator: " ")
     }
 
     func uploadImage(data: Data, filename: String = "image.jpg") async throws -> String {
@@ -181,22 +185,28 @@ actor AIService {
         }
     }
 
-    /// One selfie URL + text vibe (no extra reference uploads).
-    func generateShoot(selfieImages: [UIImage], vibe: VibePreset?) async throws -> URL {
+    /// One selfie + optional style preset and optional reference image.
+    func generateShoot(selfieImages: [UIImage], stylePreset: VibePreset?, referenceImage: UIImage?) async throws -> URL {
         guard selfieImages.count == 1 else {
             throw AIError.mockFailure("Add exactly one photo of yourself.")
         }
-        guard let vibe else {
-            throw AIError.mockFailure("Select a vibe.")
+        guard stylePreset != nil || referenceImage != nil else {
+            throw AIError.mockFailure("Add a reference photo or select a style preset.")
         }
 
-        print("[AIService] generateShoot mode=\(mode) vibe=\(vibe.rawValue)")
+        let styleName = stylePreset?.rawValue ?? "none"
+        let hasRef = referenceImage != nil
+        print("[AIService] generateShoot mode=\(mode) style=\(styleName) reference=\(hasRef)")
 
-        let prompt = Self.buildPrompt(vibe: vibe)
-        let selfieData: [Data] = try selfieImages.map { try preparedJPEGData(from: $0) }
-        let uploadedSelfieURLs: [String] = try await uploadAllParallel(dataItems: selfieData, prefix: "selfie")
+        let prompt = Self.buildPrompt(stylePreset: stylePreset, hasReferenceImage: hasRef)
+        let selfieData = try preparedJPEGData(from: selfieImages[0])
+        var uploadItems: [(String, Data)] = [("selfie", selfieData)]
+        if let referenceImage {
+            uploadItems.append(("reference", try preparedJPEGData(from: referenceImage)))
+        }
+        let uploadedURLs = try await uploadAllParallel(items: uploadItems)
 
-        let submitOutcome = try await submitEdit(imageURLs: uploadedSelfieURLs, prompt: prompt)
+        let submitOutcome = try await submitEdit(imageURLs: uploadedURLs, prompt: prompt)
         let output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL)
         let imageData = try await downloadImage(from: output)
 
@@ -217,11 +227,11 @@ actor AIService {
         }
     }
 
-    private func uploadAllParallel(dataItems: [Data], prefix: String) async throws -> [String] {
+    private func uploadAllParallel(items: [(prefix: String, data: Data)]) async throws -> [String] {
         try await withThrowingTaskGroup(of: (Int, String).self) { group in
-            for (index, data) in dataItems.enumerated() {
+            for (index, item) in items.enumerated() {
                 group.addTask {
-                    let url = try await self.uploadImage(data: data, filename: "\(prefix)_\(index).jpg")
+                    let url = try await self.uploadImage(data: item.data, filename: "\(item.prefix)_\(index).jpg")
                     return (index, url)
                 }
             }

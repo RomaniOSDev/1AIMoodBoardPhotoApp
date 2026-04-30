@@ -3,7 +3,6 @@
 //  1AIMoodBoardPhotoApp
 //
 
-import StoreKit
 import SwiftData
 import SwiftUI
 
@@ -22,11 +21,6 @@ struct GalleryResultView: View {
         return UIImage(contentsOfFile: localURL.path)
     }
 
-    private var persistedShootTitle: String? {
-        let t = coordinator.shootTitleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
-        return t.isEmpty ? nil : t
-    }
-
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
@@ -40,47 +34,31 @@ struct GalleryResultView: View {
                     ContentUnavailableView("No image", systemImage: "photo")
                 }
 
-                paywallPanel
-
                 VStack(spacing: 12) {
                     Button {
-                        guard let localURL, let uiImage else { return }
-                        Task {
-                            await viewModel.saveToMyPhotosAndLibrary(
-                                localURL: localURL,
-                                repository: dependencies.repository(context: modelContext),
-                                image: uiImage,
-                                shootTitle: persistedShootTitle
-                            )
-                        }
+                        coordinator.resetFlow()
+                        onDone()
                     } label: {
-                        Text("Save to My Photos")
+                        Text("Сгенерировать еще")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
 
                     if let localURL {
                         ShareLink(item: localURL) {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label("Поделиться", systemImage: "square.and.arrow.up")
                                 .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.bordered)
                     }
 
-                    if dependencies.bananaManager.balance == 0 {
-                        Button {
-                            Task {
-                                await purchaseBananas()
-                            }
-                        } label: {
-                            Text("Buy more bananas")
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(dependencies.storeKitManager.purchaseInProgress)
+                    Button("Сохранить в фото") {
+                        Task { await viewModel.saveToPhotoLibrary(image: uiImage) }
                     }
+                    .buttonStyle(.bordered)
+                    .frame(maxWidth: .infinity)
 
-                    Button("Done") {
+                    Button("Готово") {
                         coordinator.resetFlow()
                         onDone()
                     }
@@ -99,55 +77,18 @@ struct GalleryResultView: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .task {
+            guard let localURL else { return }
+            await viewModel.saveSessionIfNeeded(
+                localURL: localURL,
+                repository: dependencies.repository(context: modelContext),
+                shootTitle: coordinator.selectedVibe?.rawValue
+            )
+        }
         .alert("Error", isPresented: $viewModel.showError) {
             Button("OK", role: .cancel) {}
         } message: {
             Text(viewModel.errorMessage)
-        }
-    }
-
-    private var paywallPanel: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Bananas left: \(dependencies.bananaManager.balance)")
-                .font(.title3.bold())
-            Text("Buy 10 bananas for \(formattedPrice) to keep creating.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            Button {
-                Task { await purchaseBananas() }
-            } label: {
-                Text("Buy 10 bananas – \(formattedPrice)")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .disabled(dependencies.storeKitManager.purchaseInProgress)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
-        .padding(.horizontal)
-    }
-
-    private var formattedPrice: String {
-        if let product = dependencies.storeKitManager.products.first(where: { $0.id == Constants.bananaProductID }) {
-            return product.displayPrice
-        }
-        return "$4.99"
-    }
-
-    private func purchaseBananas() async {
-        do {
-            try await dependencies.storeKitManager.purchaseBananaPack(bananaManager: dependencies.bananaManager)
-        } catch let error as StoreError {
-            if case .userCancelled = error {
-                print("[GalleryResult] purchase cancelled")
-                return
-            }
-            viewModel.errorMessage = error.localizedDescription
-            viewModel.showError = true
-        } catch {
-            viewModel.errorMessage = error.localizedDescription
-            viewModel.showError = true
         }
     }
 }

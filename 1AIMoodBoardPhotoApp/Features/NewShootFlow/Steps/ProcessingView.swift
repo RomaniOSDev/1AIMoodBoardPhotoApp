@@ -49,7 +49,7 @@ struct ProcessingView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Step 2 of 3")
+                Text("Generating...")
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
             }

@@ -9,6 +9,7 @@ import UIKit
 
 final class NewShootCoordinator: ObservableObject {
     enum Screen: Hashable {
+        case styleSelection
         case processing
         case galleryResult
     }
@@ -16,8 +17,7 @@ final class NewShootCoordinator: ObservableObject {
     @Published var path = NavigationPath()
     @Published var selfieImages: [UIImage] = []
     @Published var selectedVibe: VibePreset?
-    /// Typed on step 1 (“Name this shoot”); persisted when saving.
-    @Published var shootTitleDraft: String = ""
+    @Published var referenceStyleImage: UIImage?
     @Published var generatedFileURL: URL?
 
     func push(_ screen: Screen) {
@@ -34,7 +34,7 @@ final class NewShootCoordinator: ObservableObject {
         path = NavigationPath()
         selfieImages = []
         selectedVibe = nil
-        shootTitleDraft = ""
+        referenceStyleImage = nil
         generatedFileURL = nil
     }
 }

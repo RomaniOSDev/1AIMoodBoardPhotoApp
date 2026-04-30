@@ -18,6 +18,8 @@ struct NewShootFlowContainer: View {
             UploadSelfiesView(coordinator: coordinator)
             .navigationDestination(for: NewShootCoordinator.Screen.self) { screen in
                 switch screen {
+                case .styleSelection:
+                    StyleSelectionView(coordinator: coordinator)
                 case .processing:
                     ProcessingView(
                         dependencies: dependencies,

@@ -37,15 +37,22 @@ final class StoreKitManager: ObservableObject {
     func loadProducts() async {
         do {
             products = try await Product.products(for: productIDs)
+            print("[StoreKit] requested productIDs=\(productIDs)")
             print("[StoreKit] loaded products: \(products.map(\.id))")
+            if products.isEmpty {
+                print("[StoreKit] warning: no products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration and product ids.")
+            }
         } catch {
             print("[StoreKit] loadProducts error: \(error)")
         }
     }
 
     func purchaseBananaPack(bananaManager: BananaManager) async throws {
+        if products.isEmpty {
+            await loadProducts()
+        }
         guard let product = products.first(where: { $0.id == Constants.bananaProductID }) else {
-            throw StoreError.productUnavailable
+            throw StoreError.purchaseFailed("Product `\(Constants.bananaProductID)` is unavailable. Verify StoreKit configuration is attached to the scheme.")
         }
         purchaseInProgress = true
         defer { purchaseInProgress = false }
@@ -66,7 +73,7 @@ final class StoreKitManager: ObservableObject {
         }
     }
 
-    func restorePurchases(bananaManager: BananaManager) async throws {
+    func restorePurchases() async throws {
         try await AppStore.sync()
         print("[StoreKit] AppStore.sync completed (restore). User may re-download consumables via developer policy — balance updates on successful purchase only.)")
     }
