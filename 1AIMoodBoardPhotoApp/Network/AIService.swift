@@ -85,6 +85,11 @@ actor AIService {
         let resultPollURL: URL?
     }
 
+    struct GenerationProgress: Sendable {
+        let value: Double
+        let label: String
+    }
+
     func submitEdit(imageURLs: [String], prompt: String) async throws -> SubmitEditOutcome {
         try validateAPIKeyForLive()
         print("[AIService] submitEdit images=\(imageURLs.count)")
@@ -109,7 +114,11 @@ actor AIService {
         }
     }
 
-    func pollForResult(taskID: String, resultPollURL: URL?) async throws -> String {
+    func pollForResult(
+        taskID: String,
+        resultPollURL: URL?,
+        onProgress: (@Sendable (GenerationProgress) -> Void)? = nil
+    ) async throws -> String {
         try validateAPIKeyForLive()
         print("[AIService] pollForResult taskID=\(taskID)")
 
@@ -134,8 +143,13 @@ actor AIService {
                     throw AIError.decodingFailed("poll response")
                 }
                 print("[AIService] poll attempt=\(attempt) status=\(snapshot.status) outputs=\(snapshot.outputs.count)")
+                // Non-linear progress: reaches ~80% around 10-12 attempts (typical), then slows down.
+                let eased = 1.0 - exp(-Double(attempt) / 4.0)
+                let pollProgress = 0.30 + eased * 0.58
+                onProgress?(GenerationProgress(value: min(max(pollProgress, 0), 0.90), label: "Generating"))
 
                 if let output = firstOutput(from: snapshot.outputs) {
+                    onProgress?(GenerationProgress(value: 0.90, label: "Finalizing"))
                     return output
                 }
 
@@ -186,7 +200,12 @@ actor AIService {
     }
 
     /// One selfie + optional style preset and optional reference image.
-    func generateShoot(selfieImages: [UIImage], stylePreset: VibePreset?, referenceImage: UIImage?) async throws -> URL {
+    func generateShoot(
+        selfieImages: [UIImage],
+        stylePreset: VibePreset?,
+        referenceImage: UIImage?,
+        onProgress: (@Sendable (GenerationProgress) -> Void)? = nil
+    ) async throws -> URL {
         guard selfieImages.count == 1 else {
             throw AIError.mockFailure("Add exactly one photo of yourself.")
         }
@@ -197,6 +216,7 @@ actor AIService {
         let styleName = stylePreset?.rawValue ?? "none"
         let hasRef = referenceImage != nil
         print("[AIService] generateShoot mode=\(mode) style=\(styleName) reference=\(hasRef)")
+        onProgress?(GenerationProgress(value: 0.06, label: "Preparing"))
 
         let prompt = Self.buildPrompt(stylePreset: stylePreset, hasReferenceImage: hasRef)
         let selfieData = try preparedJPEGData(from: selfieImages[0])
@@ -205,13 +225,17 @@ actor AIService {
             uploadItems.append(("reference", try preparedJPEGData(from: referenceImage)))
         }
         let uploadedURLs = try await uploadAllParallel(items: uploadItems)
+        onProgress?(GenerationProgress(value: 0.22, label: "Uploaded"))
 
         let submitOutcome = try await submitEdit(imageURLs: uploadedURLs, prompt: prompt)
-        let output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL)
+        onProgress?(GenerationProgress(value: 0.30, label: "Queued"))
+        let output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL, onProgress: onProgress)
+        onProgress?(GenerationProgress(value: 0.94, label: "Downloading"))
         let imageData = try await downloadImage(from: output)
 
         let localURL = documentsDirectory().appendingPathComponent("generated_\(UUID().uuidString).png")
         try imageData.write(to: localURL, options: .atomic)
+        onProgress?(GenerationProgress(value: 1.0, label: "Done"))
         print("[AIService] generateShoot saved=\(localURL.path)")
         return localURL
     }

@@ -17,7 +17,7 @@ final class AppDependencies: ObservableObject {
     init() {
         persistence = PersistenceController.shared
         bananaManager = BananaManager.shared
-        storeKitManager = StoreKitManager()
+        storeKitManager = StoreKitManager(bananaManager: bananaManager)
         aiService = AIService(mode: Constants.aiUseLiveNetwork ? .live : .mock)
     }
 

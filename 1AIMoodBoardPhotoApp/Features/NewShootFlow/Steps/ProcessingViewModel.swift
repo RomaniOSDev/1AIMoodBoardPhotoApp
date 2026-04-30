@@ -9,13 +9,7 @@ import SwiftUI
 
 @MainActor
 final class ProcessingViewModel: ObservableObject {
-    enum StatusMessage: String {
-        case uploading = "Uploading photos..."
-        case ai = "AI is creating your style..."
-        case almost = "Almost ready..."
-    }
-
-    @Published var message: StatusMessage = .uploading
+    @Published var message: String = "Preparing..."
     @Published var progress: Double = 0.15
     @Published var showAlert = false
     @Published var alertTitle = "Error"
@@ -24,6 +18,7 @@ final class ProcessingViewModel: ObservableObject {
     @Published private(set) var completedSuccessfully = false
 
     private var hasStarted = false
+    private var currentTask: Task<Void, Never>?
 
     func startIfNeeded(
         dependencies: AppDependencies,
@@ -32,7 +27,7 @@ final class ProcessingViewModel: ObservableObject {
     ) async {
         guard !hasStarted else { return }
         hasStarted = true
-        await runPipeline(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
+        startPipelineTask(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
     }
 
     func retry(
@@ -40,11 +35,28 @@ final class ProcessingViewModel: ObservableObject {
         coordinator: NewShootCoordinator,
         onSuccess: @escaping () -> Void
     ) async {
+        currentTask?.cancel()
         completedSuccessfully = false
         isRunning = true
         progress = 0.15
-        message = .uploading
-        await runPipeline(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
+        message = "Preparing..."
+        startPipelineTask(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
+    }
+
+    func cancelGeneration() {
+        currentTask?.cancel()
+    }
+
+    private func startPipelineTask(
+        dependencies: AppDependencies,
+        coordinator: NewShootCoordinator,
+        onSuccess: @escaping () -> Void
+    ) {
+        currentTask?.cancel()
+        currentTask = Task { [weak self] in
+            guard let self else { return }
+            await self.runPipeline(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
+        }
     }
 
     private func runPipeline(
@@ -52,6 +64,7 @@ final class ProcessingViewModel: ObservableObject {
         coordinator: NewShootCoordinator,
         onSuccess: @escaping () -> Void
     ) async {
+        defer { currentTask = nil }
         isRunning = true
         var charged = false
 
@@ -59,30 +72,36 @@ final class ProcessingViewModel: ObservableObject {
             try dependencies.bananaManager.chargeForGeneration()
             charged = true
 
-            message = .uploading
-            progress = 0.25
-
-            message = .ai
-            progress = 0.55
-
             let url = try await dependencies.aiService.generateShoot(
                 selfieImages: coordinator.selfieImages,
                 stylePreset: coordinator.selectedVibe,
-                referenceImage: coordinator.referenceStyleImage
+                referenceImage: coordinator.referenceStyleImage,
+                onProgress: { [weak self] update in
+                    Task { @MainActor in
+                        guard let self else { return }
+                        self.progress = min(max(update.value, 0), 1)
+                        self.message = update.label
+                    }
+                }
             )
-
-            message = .almost
-            progress = 0.95
 
             coordinator.generatedFileURL = url
             dependencies.bananaManager.recordSuccessfulGenerationSpend()
 
             charged = false
             progress = 1.0
+            message = "Done"
             completedSuccessfully = true
             isRunning = false
             print("[ProcessingViewModel] success path=\(url.path)")
+            // Keep 100% visible briefly before navigation.
+            try? await Task.sleep(nanoseconds: 350_000_000)
             onSuccess()
+        } catch is CancellationError {
+            if charged { dependencies.bananaManager.refundGeneration() }
+            charged = false
+            isRunning = false
+            print("[ProcessingViewModel] cancelled")
         } catch let error as BananaError {
             if charged { dependencies.bananaManager.refundGeneration() }
             charged = false

@@ -36,6 +36,13 @@ enum Constants {
         static let account = "balance"
     }
 
+    enum BananaProducts {
+        static let five = "5_bananas"
+        static let ten = "10_bananas"
+        static let thirty = "30_bananas"
+        static let all = [five, ten, thirty]
+    }
+
     enum Stats {
         static let totalSpentKey = "total_bananas_spent"
     }

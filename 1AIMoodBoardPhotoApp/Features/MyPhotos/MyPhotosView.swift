@@ -44,8 +44,10 @@ struct MyPhotosView: View {
                     }
                     .padding(12)
                 }
+                .ignoresSafeArea(edges: .bottom)
             }
-            .padding()
+            .padding(.horizontal)
+            .padding(.top)
             .overlay {
                 if viewModel.photos.isEmpty {
                     ContentUnavailableView("No photos yet", systemImage: "photo.on.rectangle.angled")

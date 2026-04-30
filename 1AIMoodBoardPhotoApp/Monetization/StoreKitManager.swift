@@ -23,15 +23,60 @@ enum StoreError: LocalizedError {
     }
 }
 
+enum BananaPack: CaseIterable, Identifiable, Sendable {
+    case five
+    case ten
+    case thirty
+
+    var id: String { productID }
+
+    var productID: String {
+        switch self {
+        case .five: return Constants.BananaProducts.five
+        case .ten: return Constants.BananaProducts.ten
+        case .thirty: return Constants.BananaProducts.thirty
+        }
+    }
+
+    var bananas: Int {
+        switch self {
+        case .five: return 5
+        case .ten: return 10
+        case .thirty: return 30
+        }
+    }
+
+    var fallbackPrice: String {
+        switch self {
+        case .five: return "$2.99"
+        case .ten: return "$4.99"
+        case .thirty: return "$12.99"
+        }
+    }
+
+    var title: String { "\(bananas) bananas" }
+}
+
 @MainActor
 final class StoreKitManager: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchaseInProgress = false
 
-    private let productIDs = [Constants.bananaProductID]
+    private let productIDs = Constants.BananaProducts.all
+    private let bananaManager: BananaManager
+    private var updatesTask: Task<Void, Never>?
+    private var processedTransactionIDs: Set<String>
+    private static let processedTransactionsKey = "storekit_processed_transaction_ids"
 
-    init() {
+    init(bananaManager: BananaManager) {
+        self.bananaManager = bananaManager
+        self.processedTransactionIDs = Set(UserDefaults.standard.stringArray(forKey: Self.processedTransactionsKey) ?? [])
+        startTransactionListener()
         Task { await loadProducts() }
+    }
+
+    deinit {
+        updatesTask?.cancel()
     }
 
     func loadProducts() async {
@@ -47,12 +92,16 @@ final class StoreKitManager: ObservableObject {
         }
     }
 
-    func purchaseBananaPack(bananaManager: BananaManager) async throws {
+    func purchaseBananaPack() async throws {
+        try await purchase(pack: .ten)
+    }
+
+    func purchase(pack: BananaPack) async throws {
         if products.isEmpty {
             await loadProducts()
         }
-        guard let product = products.first(where: { $0.id == Constants.bananaProductID }) else {
-            throw StoreError.purchaseFailed("Product `\(Constants.bananaProductID)` is unavailable. Verify StoreKit configuration is attached to the scheme.")
+        guard let product = products.first(where: { $0.id == pack.productID }) else {
+            throw StoreError.purchaseFailed("Product `\(pack.productID)` is unavailable. Verify StoreKit configuration is attached to the scheme.")
         }
         purchaseInProgress = true
         defer { purchaseInProgress = false }
@@ -61,8 +110,7 @@ final class StoreKitManager: ObservableObject {
         switch result {
         case .success(let verification):
             let transaction = try checkVerified(verification)
-            await deliverBananas(bananaManager: bananaManager)
-            await transaction.finish()
+            await handleVerifiedTransaction(transaction, source: "purchase")
             print("[StoreKit] purchase success id=\(transaction.id)")
         case .userCancelled:
             throw StoreError.userCancelled
@@ -73,13 +121,55 @@ final class StoreKitManager: ObservableObject {
         }
     }
 
+    func displayPrice(for pack: BananaPack) -> String {
+        products.first(where: { $0.id == pack.productID })?.displayPrice ?? pack.fallbackPrice
+    }
+
     func restorePurchases() async throws {
         try await AppStore.sync()
         print("[StoreKit] AppStore.sync completed (restore). User may re-download consumables via developer policy — balance updates on successful purchase only.)")
     }
 
-    private func deliverBananas(bananaManager: BananaManager) async {
-        bananaManager.addPurchasedBananas(10)
+    private func startTransactionListener() {
+        updatesTask?.cancel()
+        updatesTask = Task { [weak self] in
+            guard let self else { return }
+            for await result in Transaction.updates {
+                do {
+                    let transaction = try self.checkVerified(result)
+                    await self.handleVerifiedTransaction(transaction, source: "updates")
+                } catch {
+                    print("[StoreKit] updates verification failed: \(error)")
+                }
+            }
+        }
+    }
+
+    private func handleVerifiedTransaction(_ transaction: Transaction, source: String) async {
+        let id = String(transaction.id)
+        let wasProcessed = processedTransactionIDs.contains(id)
+
+        if !wasProcessed {
+            if let pack = BananaPack.allCases.first(where: { $0.productID == transaction.productID }) {
+                bananaManager.addPurchasedBananas(pack.bananas)
+                print("[StoreKit] delivered bananas=\(pack.bananas) tx=\(transaction.id) source=\(source)")
+            } else {
+                print("[StoreKit] ignoring non-banana product id=\(transaction.productID) tx=\(transaction.id)")
+            }
+            markTransactionProcessed(id)
+        } else {
+            print("[StoreKit] already processed tx=\(transaction.id) source=\(source)")
+        }
+
+        await transaction.finish()
+    }
+
+    private func markTransactionProcessed(_ id: String) {
+        processedTransactionIDs.insert(id)
+        // Keep persistence bounded in case of many test purchases.
+        let trimmed = Array(processedTransactionIDs.suffix(300))
+        processedTransactionIDs = Set(trimmed)
+        UserDefaults.standard.set(Array(processedTransactionIDs), forKey: Self.processedTransactionsKey)
     }
 
     private func checkVerified(_ result: VerificationResult<Transaction>) throws -> Transaction {

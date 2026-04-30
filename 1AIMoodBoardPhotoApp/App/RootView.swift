@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct RootView: View {
     @StateObject private var onboardingViewModel = OnboardingViewModel()
@@ -40,4 +41,11 @@ struct RootView: View {
             }
         }
     }
+}
+
+#Preview {
+    let dependencies = AppDependencies()
+    return RootView()
+        .environmentObject(dependencies)
+        .modelContainer(dependencies.persistence.container)
 }
