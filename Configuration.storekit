@@ -1,0 +1,38 @@
+{
+  "identifier" : "10BANANAS_STOREKIT",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "10BANANAS001",
+      "localizations" : [
+        {
+          "description" : "Adds 10 bananas for AI generations.",
+          "displayName" : "10 Bananas",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "10_bananas",
+      "referenceName" : "10 Bananas Pack",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
