@@ -32,7 +32,7 @@ final class GalleryResultViewModel: ObservableObject {
         }
     }
 
-    func saveToPhotoLibrary(image: UIImage?) async {
+    func saveToPhotoLibrary(image: UIImage?) async -> Bool {
         do {
             guard let image else {
                 throw NSError(domain: "Gallery", code: 1, userInfo: [NSLocalizedDescriptionKey: "Missing image"])
@@ -40,10 +40,12 @@ final class GalleryResultViewModel: ObservableObject {
             let saver = PhotoAlbumSaver()
             try await saver.saveToPhotoLibrary(image)
             print("[GalleryResult] saved photo library")
+            return true
         } catch {
             errorMessage = error.localizedDescription
             showError = true
             print("[GalleryResult] save library error: \(error)")
+            return false
         }
     }
 }

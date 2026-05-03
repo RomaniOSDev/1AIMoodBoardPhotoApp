@@ -14,6 +14,7 @@ struct GalleryResultView: View {
     var saveOnAppear: Bool = true
 
     @StateObject private var viewModel = GalleryResultViewModel()
+    @State private var showSavedToast = false
 
     private var localURL: URL? { coordinator.generatedFileURL }
 
@@ -55,7 +56,17 @@ struct GalleryResultView: View {
                         }
                         
                         Button {
-                            Task { await viewModel.saveToPhotoLibrary(image: uiImage) }
+                            Task {
+                                let didSave = await viewModel.saveToPhotoLibrary(image: uiImage)
+                                guard didSave else { return }
+                                withAnimation(.spring(response: 0.34, dampingFraction: 0.78)) {
+                                    showSavedToast = true
+                                }
+                                try? await Task.sleep(nanoseconds: 1_400_000_000)
+                                withAnimation(.easeOut(duration: 0.25)) {
+                                    showSavedToast = false
+                                }
+                            }
                         } label: {
                             CustomButtonView(text: "Save to Photos")
                             
@@ -95,6 +106,21 @@ struct GalleryResultView: View {
                 Button("OK", role: .cancel) {}
             } message: {
                 Text(viewModel.errorMessage)
+            }
+            .overlay(alignment: .bottom) {
+                if showSavedToast {
+                    HStack(spacing: 8) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                        Text("Saved to Photos")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(.ultraThinMaterial, in: Capsule())
+                    .padding(.bottom, 24)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
             }
         }
     }

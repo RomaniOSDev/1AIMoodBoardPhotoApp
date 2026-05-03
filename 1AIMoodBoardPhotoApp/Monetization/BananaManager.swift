@@ -80,6 +80,12 @@ final class BananaManager: ObservableObject {
         print("[BananaManager] added \(count), balance=\(balance)")
     }
 
+    func resetToInitialBalance() {
+        balance = Constants.initialBananaBalance
+        persistBalance()
+        print("[BananaManager] reset balance=\(balance)")
+    }
+
     var totalBananasSpentStatistic: Int {
         UserDefaults.standard.integer(forKey: Constants.Stats.totalSpentKey)
     }

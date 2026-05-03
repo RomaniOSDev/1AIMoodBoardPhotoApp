@@ -13,6 +13,8 @@ final class ProfileViewModel: ObservableObject {
     @Published var purchaseErrorMessage = ""
     @Published var showRestoreAlert = false
     @Published var restoreMessage = ""
+    @Published var showResetAlert = false
+    @Published var resetMessage = ""
 
     func purchase(pack: BananaPack, dependencies: AppDependencies) async {
         do {
@@ -40,6 +42,22 @@ final class ProfileViewModel: ObservableObject {
 
     func generationCount(repository: ShootRepository) -> Int {
         (try? repository.fetchAllPhotosSorted().count) ?? 0
+    }
+
+    func resetAllData(dependencies: AppDependencies, modelContext: ModelContext) async -> Bool {
+        do {
+            try dependencies.repository(context: modelContext).resetAllData()
+            dependencies.bananaManager.resetToInitialBalance()
+            UserDefaults.standard.set(0, forKey: Constants.Stats.totalSpentKey)
+            UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
+            resetMessage = "All app data has been reset."
+            showResetAlert = true
+            return true
+        } catch {
+            resetMessage = error.localizedDescription
+            showResetAlert = true
+            return false
+        }
     }
 
     var appVersion: String {

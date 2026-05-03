@@ -61,6 +61,7 @@ enum BananaPack: CaseIterable, Identifiable, Sendable {
 final class StoreKitManager: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var purchaseInProgress = false
+    @Published private(set) var loadErrorMessage: String?
 
     private let productIDs = Constants.BananaProducts.all
     private let bananaManager: BananaManager
@@ -85,9 +86,13 @@ final class StoreKitManager: ObservableObject {
             print("[StoreKit] requested productIDs=\(productIDs)")
             print("[StoreKit] loaded products: \(products.map(\.id))")
             if products.isEmpty {
+                loadErrorMessage = "No products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration."
                 print("[StoreKit] warning: no products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration and product ids.")
+            } else {
+                loadErrorMessage = nil
             }
         } catch {
+            loadErrorMessage = error.localizedDescription
             print("[StoreKit] loadProducts error: \(error)")
         }
     }

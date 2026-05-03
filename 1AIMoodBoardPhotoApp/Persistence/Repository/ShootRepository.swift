@@ -40,6 +40,21 @@ final class ShootRepository {
         return session
     }
 
+    func resetAllData() throws {
+        let photos = try fetchAllPhotosSorted()
+        for photo in photos {
+            let fileURL = absoluteURL(for: photo)
+            try? FileManager.default.removeItem(at: fileURL)
+        }
+
+        let sessions = try fetchSessionsSorted()
+        for session in sessions {
+            modelContext.delete(session)
+        }
+        try modelContext.save()
+        print("[ShootRepository] reset all sessions=\(sessions.count) files=\(photos.count)")
+    }
+
     func absoluteURL(for photo: GeneratedPhoto) -> URL {
         documentsDirectory().appendingPathComponent(photo.localRelativePath)
     }

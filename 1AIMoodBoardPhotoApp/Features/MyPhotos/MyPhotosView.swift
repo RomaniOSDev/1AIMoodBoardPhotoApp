@@ -23,7 +23,7 @@ struct MyPhotosView: View {
             VStack {
                 HStack {
                     Text("My Photos")
-                        .font(.system(size: 32, weight: .bold, design: .monospaced))
+                        .font(AppFont.custom(32, weight: .bold))
 
                     Spacer()
 
@@ -127,22 +127,20 @@ private struct PhotoDetailSheet: View {
                     Image(uiImage: image)
                         .resizable()
                         .scaledToFit()
+                        .cornerRadius(10)
                         .padding()
+                        
                 }
                 VStack(spacing: 12) {
                     Button {
                         Task { await saveToGallery() }
                     } label: {
-                        Text("Save to Gallery")
-                            .frame(maxWidth: .infinity)
+                        CustomButtonView(text: "Save to Gallery")
                     }
-                    .buttonStyle(.borderedProminent)
-
                     ShareLink(item: fileURL) {
-                        Label("Share", systemImage: "square.and.arrow.up")
-                            .frame(maxWidth: .infinity)
+                        CustomButtonView(image: "square.and.arrow.up", text: "Share")
+                        
                     }
-                    .buttonStyle(.bordered)
                 }
                 .padding()
             }

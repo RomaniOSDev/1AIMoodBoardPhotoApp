@@ -27,28 +27,50 @@ struct BananaToolbarTrailing: View {
     @Environment(\.mainTabSelection) private var tabSelection
 
     var body: some View {
-        HStack(spacing: 8) {
-            Image("bananmini")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-
+        HStack(spacing: 5) {
             Text("\(bananaManager.balance)")
                 .font(.subheadline.weight(.semibold))
                 .monospacedDigit()
                 .foregroundStyle(.primary)
+            Image("bananmini")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 20, height: 20)
 
             Button {
                 tabSelection.wrappedValue = MainTab.profileIndex
             } label: {
-                Image(systemName: "plus.circle.fill")
+                Image(systemName: "plus.rectangle.fill")
                     .font(.title3)
                     .symbolRenderingMode(.hierarchical)
-                    .foregroundStyle(.tint)
+                    .foregroundStyle(.orange)
             }
             .buttonStyle(.plain)
             .accessibilityLabel("Buy bananas")
         }
-        .padding(.leading, 4)
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            Color(.secondarySystemBackground),
+                            Color(.secondarySystemBackground).opacity(0.9)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.pinkApp.opacity(0.35), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
+                .shadow(color: Color.pinkApp.opacity(0.12), radius: 4, x: 0, y: 0)
+        )
     }
 }
