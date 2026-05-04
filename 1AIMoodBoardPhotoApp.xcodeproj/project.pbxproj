@@ -6,8 +6,13 @@
 	objectVersion = 70;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		3063E2F92FA7EAC70071A61B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3063E2F82FA7EAC60071A61B /* StoreKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		0258B66AD2D4FB7F8E00C13F /* Pods-1AIMoodBoardPhotoApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-1AIMoodBoardPhotoApp.release.xcconfig"; path = "Target Support Files/Pods-1AIMoodBoardPhotoApp/Pods-1AIMoodBoardPhotoApp.release.xcconfig"; sourceTree = "<group>"; };
+		3063E2F82FA7EAC60071A61B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		30D287CB2FA2BE2D008D5BDC /* 1AIMoodBoardPhotoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 1AIMoodBoardPhotoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AE9EFB32A131E0203AE0EF /* Pods-1AIMoodBoardPhotoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; path = "Target Support Files/Pods-1AIMoodBoardPhotoApp/Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; sourceTree = "<group>"; };
 		C50F35F092D7E25B73DDE672 /* Pods_1AIMoodBoardPhotoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_1AIMoodBoardPhotoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -22,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3063E2F92FA7EAC70071A61B /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,6 +64,7 @@
 		C6CBD14A303BB14037CC6916 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3063E2F82FA7EAC60071A61B /* StoreKit.framework */,
 				C50F35F092D7E25B73DDE672 /* Pods_1AIMoodBoardPhotoApp.framework */,
 			);
 			name = Frameworks;
@@ -295,12 +302,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "AIMood Board Photo";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
-				INFOPLIST_KEY_UIAppFonts = (
-					Utilities/Fonts/PlayfairDisplay.ttf,
-					"Utilities/Fonts/PlayfairDisplay-Italic.ttf",
-				);
+				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -338,12 +343,10 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "AIMood Board Photo";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
-				INFOPLIST_KEY_UIAppFonts = (
-					Utilities/Fonts/PlayfairDisplay.ttf,
-					"Utilities/Fonts/PlayfairDisplay-Italic.ttf",
-				);
+				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -10,7 +10,7 @@ enum Constants {
     static let wavespeedAPIKey = "7ccf6b1f435db7e53d022eb21e947bd45062573393457ff5c47d8e3da310dcaf"
 
     static let bananaProductID = "10_bananas"
-    static let initialBananaBalance = 1
+    static let initialBananaBalance = 0
     static let generationCost = 1
 
     static let maxImageDimension: CGFloat = 1024
@@ -27,6 +27,7 @@ enum Constants {
     static let outputDownloadMaxAttempts: Int = 3
 
     static let onboardingCompletedKey = "onboarding_completed"
+    static let firstLaunchBananaGrantedKey = "first_launch_banana_granted"
 
     /// Toggle live WaveSpeed API vs offline mock pipeline (see AIService).
     static let aiUseLiveNetwork = true

@@ -70,7 +70,7 @@ struct UploadSelfiesView: View {
 
     private var titleBlock: some View {
         VStack(spacing: 8) {
-            Text("Выбор фото")
+            Text("Choose a Selfie")
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
             Text("Add one clear selfie")

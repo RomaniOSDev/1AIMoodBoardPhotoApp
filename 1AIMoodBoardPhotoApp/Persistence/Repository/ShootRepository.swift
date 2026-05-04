@@ -40,6 +40,21 @@ final class ShootRepository {
         return session
     }
 
+    func deletePhoto(_ photo: GeneratedPhoto) throws {
+        let fileURL = absoluteURL(for: photo)
+        let parentSession = photo.session
+        let shouldDeleteSession = (parentSession?.photos.count ?? 0) <= 1
+
+        modelContext.delete(photo)
+        if shouldDeleteSession, let parentSession {
+            modelContext.delete(parentSession)
+        }
+        try modelContext.save()
+
+        try? FileManager.default.removeItem(at: fileURL)
+        print("[ShootRepository] deleted photo=\(photo.id)")
+    }
+
     func resetAllData() throws {
         let photos = try fetchAllPhotosSorted()
         for photo in photos {

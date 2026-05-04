@@ -12,6 +12,7 @@ struct MyPhotosView: View {
 
     @StateObject private var viewModel = MyPhotosViewModel()
     @State private var selectedPhoto: GeneratedPhoto?
+    @State private var showNewShoot = false
 
     private let columns = [
         GridItem(.flexible(), spacing: 12),
@@ -50,7 +51,19 @@ struct MyPhotosView: View {
             .padding(.top)
             .overlay {
                 if viewModel.photos.isEmpty {
-                    ContentUnavailableView("No photos yet", systemImage: "photo.on.rectangle.angled")
+                    VStack(spacing: 14) {
+                        Text("You haven't added any photos yet")
+                            .font(AppFont.custom(24, weight: .heavy))
+                                  Text("Take your first photo")
+                                .font(.subheadline)
+                        Button {
+                            showNewShoot = true
+                        } label: {
+                            CustomButtonView(image: "plus", text: "Create Shot")
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.horizontal, 28)
+                    }
                 }
             }
             .onAppear {
@@ -67,11 +80,26 @@ struct MyPhotosView: View {
                 set: { if !$0 { selectedPhoto = nil } }
             )) {
                 if let photo = selectedPhoto {
+                    let repository = dependencies.repository(context: modelContext)
                     PhotoDetailSheet(
                         photo: photo,
-                        fileURL: dependencies.repository(context: modelContext).absoluteURL(for: photo)
+                        fileURL: repository.absoluteURL(for: photo),
+                        repository: repository,
+                        onDeleted: {
+                            selectedPhoto = nil
+                            viewModel.load()
+                        }
                     )
                 }
+            }
+            .fullScreenCover(isPresented: $showNewShoot) {
+                NewShootFlowContainer(
+                    dependencies: dependencies,
+                    onComplete: {
+                        showNewShoot = false
+                        viewModel.load()
+                    }
+                )
             }
         }
     }
@@ -111,10 +139,13 @@ private struct PhotoThumbnail: View {
 private struct PhotoDetailSheet: View {
     let photo: GeneratedPhoto
     let fileURL: URL
+    let repository: ShootRepository
+    let onDeleted: () -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var showError = false
     @State private var errorMessage = ""
+    @State private var showDeleteConfirmation = false
 
     private var image: UIImage? {
         UIImage(contentsOfFile: fileURL.path)
@@ -141,6 +172,13 @@ private struct PhotoDetailSheet: View {
                         CustomButtonView(image: "square.and.arrow.up", text: "Share")
                         
                     }
+
+                    Button(role: .destructive) {
+                        showDeleteConfirmation = true
+                    } label: {
+                        CustomButtonView(image: "trash.fill", text: "Delete Photo")
+                            .opacity(0.9)
+                    }
                 }
                 .padding()
             }
@@ -156,6 +194,18 @@ private struct PhotoDetailSheet: View {
             } message: {
                 Text(errorMessage)
             }
+            .confirmationDialog(
+                "Delete this photo?",
+                isPresented: $showDeleteConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Delete", role: .destructive) {
+                    deletePhoto()
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("This action cannot be undone.")
+            }
         }
     }
 
@@ -170,4 +220,31 @@ private struct PhotoDetailSheet: View {
             showError = true
         }
     }
+
+    private func deletePhoto() {
+        do {
+            try repository.deletePhoto(photo)
+            onDeleted()
+            dismiss()
+        } catch {
+            errorMessage = error.localizedDescription
+            showError = true
+        }
+    }
 }
+
+private struct MyPhotosPreviewHost: View {
+    let dependencies = AppDependencies()
+
+    var body: some View {
+        MyPhotosView()
+            .environmentObject(dependencies)
+            .modelContainer(dependencies.persistence.container)
+    }
+}
+
+#Preview {
+    MyPhotosPreviewHost()
+}
+
+

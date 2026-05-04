@@ -11,6 +11,7 @@ import UIKit
 struct ProfileView: View {
     @EnvironmentObject private var dependencies: AppDependencies
     @Environment(\.modelContext) private var modelContext
+    @ObservedObject private var bananaManager = BananaManager.shared
 
     @StateObject private var viewModel = ProfileViewModel()
     @State private var libraryPhotoCount = 0
@@ -45,7 +46,7 @@ struct ProfileView: View {
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: 20, height: 20)
-                                Text("\(dependencies.bananaManager.balance)")
+                                Text("\(bananaManager.balance)")
                                     .font(.title2.bold())
                             }
                             .padding(.bottom, 6)
@@ -100,7 +101,7 @@ struct ProfileView: View {
                             HStack {
                                 Text("Bananas spent (lifetime)")
                                 Spacer()
-                                Text("\(dependencies.bananaManager.totalBananasSpentStatistic)")
+                                Text("\(bananaManager.totalBananasSpentStatistic)")
                                     .foregroundStyle(.secondary)
                             }
                         }

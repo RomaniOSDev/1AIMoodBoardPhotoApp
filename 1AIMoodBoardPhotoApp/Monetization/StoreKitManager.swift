@@ -6,6 +6,7 @@
 import Foundation
 import StoreKit
 import Combine
+import UIKit
 
 enum StoreError: LocalizedError {
     case productUnavailable
@@ -73,7 +74,10 @@ final class StoreKitManager: ObservableObject {
         self.bananaManager = bananaManager
         self.processedTransactionIDs = Set(UserDefaults.standard.stringArray(forKey: Self.processedTransactionsKey) ?? [])
         startTransactionListener()
-        Task { await loadProducts() }
+        Task {
+            await syncUnfinishedTransactions()
+            await loadProducts()
+        }
     }
 
     deinit {
@@ -111,7 +115,13 @@ final class StoreKitManager: ObservableObject {
         purchaseInProgress = true
         defer { purchaseInProgress = false }
 
-        let result = try await product.purchase()
+        let result: Product.PurchaseResult
+        if let scene = activeWindowScene() {
+            result = try await product.purchase(confirmIn: scene)
+        } else {
+            print("[StoreKit] warning: no active UIWindowScene for purchase; falling back to purchase()")
+            result = try await product.purchase()
+        }
         switch result {
         case .success(let verification):
             let transaction = try checkVerified(verification)
@@ -133,6 +143,17 @@ final class StoreKitManager: ObservableObject {
     func restorePurchases() async throws {
         try await AppStore.sync()
         print("[StoreKit] AppStore.sync completed (restore). User may re-download consumables via developer policy — balance updates on successful purchase only.)")
+    }
+
+    private func syncUnfinishedTransactions() async {
+        for await result in Transaction.unfinished {
+            do {
+                let transaction = try checkVerified(result)
+                await handleVerifiedTransaction(transaction, source: "unfinished")
+            } catch {
+                print("[StoreKit] unfinished verification failed: \(error)")
+            }
+        }
     }
 
     private func startTransactionListener() {
@@ -185,5 +206,11 @@ final class StoreKitManager: ObservableObject {
         case .verified(let transaction):
             return transaction
         }
+    }
+
+    private func activeWindowScene() -> UIWindowScene? {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first { $0.activationState == .foregroundActive }
     }
 }

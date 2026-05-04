@@ -50,6 +50,7 @@ final class ProfileViewModel: ObservableObject {
             dependencies.bananaManager.resetToInitialBalance()
             UserDefaults.standard.set(0, forKey: Constants.Stats.totalSpentKey)
             UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
+            UserDefaults.standard.set(false, forKey: Constants.firstLaunchBananaGrantedKey)
             resetMessage = "All app data has been reset."
             showResetAlert = true
             return true
