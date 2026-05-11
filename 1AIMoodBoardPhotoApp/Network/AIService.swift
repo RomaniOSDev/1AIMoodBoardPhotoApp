@@ -179,7 +179,12 @@ actor AIService {
     func downloadImage(from output: String) async throws -> Data {
         let trimmed = output.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.hasPrefix("data:image"), let data = decodeDataURI(trimmed) {
-            print("[AIService] downloadImage inline base64 bytes=\(data.count)")
+            print("[AIService] downloadImage data URI bytes=\(data.count)")
+            return data
+        }
+        // enable_base64_output: true → naked base64, no data: prefix (WaveSpeed docs).
+        if let data = decodeNakedBase64ImageOutput(trimmed) {
+            print("[AIService] downloadImage naked base64 bytes=\(data.count)")
             return data
         }
         guard let remoteURL = URL(string: trimmed) else {
@@ -295,5 +300,34 @@ actor AIService {
         guard let comma = value.firstIndex(of: ",") else { return nil }
         let payload = String(value[value.index(after: comma)...])
         return Data(base64Encoded: payload, options: .ignoreUnknownCharacters)
+    }
+
+    /// Decodes WaveSpeed `enable_base64_output` strings: standard base64, full string, no MIME wrapper.
+    private func decodeNakedBase64ImageOutput(_ value: String) -> Data? {
+        let lower = value.lowercased()
+        if lower.hasPrefix("http://") || lower.hasPrefix("https://") {
+            return nil
+        }
+        guard value.count >= 32 else { return nil }
+
+        guard let data = Data(base64Encoded: value, options: .ignoreUnknownCharacters) else {
+            return nil
+        }
+        guard data.count >= 12 else { return nil }
+
+        let bytes = [UInt8](data.prefix(8))
+        let isPNG = bytes.count >= 8
+            && bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47
+            && bytes[4] == 0x0D && bytes[5] == 0x0A && bytes[6] == 0x1A && bytes[7] == 0x0A
+        let isJPEG = bytes.count >= 3 && bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF
+        // WebP: RIFF .... WEBP
+        let isWebP = data.count >= 12
+            && bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46
+            && data[8] == 0x57 && data[9] == 0x45 && data[10] == 0x42 && data[11] == 0x50
+
+        if isPNG || isJPEG || isWebP {
+            return data
+        }
+        return nil
     }
 }
