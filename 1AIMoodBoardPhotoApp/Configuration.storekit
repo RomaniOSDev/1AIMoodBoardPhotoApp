@@ -1,4 +1,14 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "BANANAS_STOREKIT",
   "nonRenewingSubscriptions" : [
 
@@ -15,7 +25,7 @@
           "locale" : "en_US"
         }
       ],
-      "productID" : "5_bananas",
+      "productID" : "5_banana",
       "referenceName" : "5 Bananas Pack",
       "type" : "Consumable"
     },
@@ -51,18 +61,24 @@
     }
   ],
   "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",
     "_storeKitErrors" : [
 
-    ]
+    ],
+    "_timeRate" : 0
   },
   "subscriptionGroups" : [
 
   ],
   "version" : {
-    "major" : 4,
+    "major" : 5,
     "minor" : 0
   }
 }

@@ -38,7 +38,7 @@ enum Constants {
     }
 
     enum BananaProducts {
-        static let five = "5_bananas"
+        static let five = "5_banana"
         static let ten = "10_bananas"
         static let thirty = "30_bananas"
         static let all = [five, ten, thirty]

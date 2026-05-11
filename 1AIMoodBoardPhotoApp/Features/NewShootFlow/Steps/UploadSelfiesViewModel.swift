@@ -17,9 +17,11 @@ final class UploadSelfiesViewModel: ObservableObject {
     var hasPhoto: Bool { images.count == 1 }
 
     func addImages(_ new: [UIImage]) {
+        guard !new.isEmpty else { return }
         var combined = images + new
         if combined.count > maxPhotos {
-            combined = Array(combined.prefix(maxPhotos))
+            // Keep the most recently picked images (replace flow: old + new → new wins).
+            combined = Array(combined.suffix(maxPhotos))
         }
         images = combined
         print("[UploadSelfies] count=\(images.count)")
