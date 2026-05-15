@@ -12,7 +12,7 @@ enum BananaError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .insufficientFunds: return "Not enough bananas."
+        case .insufficientFunds: return L10n.AppStrings.notEnoughBananas
         case .keychainFailed(let message): return message
         }
     }

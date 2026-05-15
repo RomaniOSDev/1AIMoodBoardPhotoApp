@@ -11,12 +11,9 @@ struct UploadSelfiesView: View {
     @ObservedObject var coordinator: NewShootCoordinator
 
     @StateObject private var viewModel = UploadSelfiesViewModel()
-    private let tipLines = [
-        "No sunglasses or heavy makeup",
-        "Face clearly visible",
-        "Good, natural lighting",
-        "Straight-on or slight angle works best for one photo"
-    ]
+    private var tipLines: [String] {
+        [L10n.Shoot.tip1, L10n.Shoot.tip2, L10n.Shoot.tip3, L10n.Shoot.tip4]
+    }
 
     private var canContinue: Bool {
         viewModel.hasPhoto
@@ -36,7 +33,7 @@ struct UploadSelfiesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Step 1 of 3")
+                Text(L10n.Shoot.step1)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
             }
@@ -45,7 +42,11 @@ struct UploadSelfiesView: View {
                     coordinator.resetFlow()
                     dismiss()
                 } label: {
-                    Label("Back", systemImage: "chevron.left")
+                    Label {
+                        Text(L10n.Common.back)
+                    } icon: {
+                        Image(systemName: "chevron.left")
+                    }
                 }
             }
         }
@@ -54,7 +55,7 @@ struct UploadSelfiesView: View {
                 coordinator.selfieImages = viewModel.images
                 coordinator.push(.styleSelection)
             } label: {
-                CustomButtonView(text: "Continue")
+                CustomButtonView(text: L10n.Common.continueAction)
             }
             .buttonStyle(.plain)
             .disabled(!canContinue)
@@ -70,10 +71,10 @@ struct UploadSelfiesView: View {
 
     private var titleBlock: some View {
         VStack(spacing: 8) {
-            Text("Choose a Selfie")
+            Text(L10n.Shoot.selfieTitle)
                 .font(.title.bold())
                 .multilineTextAlignment(.center)
-            Text("Add one clear selfie")
+            Text(L10n.Shoot.selfieSubtitle)
                 .font(.title2)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -102,7 +103,7 @@ struct UploadSelfiesView: View {
                 .padding(10)
             }
 
-            Button("Replace photo") {
+            Button(L10n.Shoot.replacePhoto) {
                 viewModel.showPicker = true
             }
             .font(.subheadline.weight(.medium))
@@ -113,7 +114,7 @@ struct UploadSelfiesView: View {
                 VStack(spacing: 12) {
                     Image(systemName: "plus.circle.fill")
                         .font(.largeTitle)
-                    Text("Add photo")
+                    Text(L10n.Shoot.addPhoto)
                         .font(.subheadline.weight(.medium))
                 }
                 .frame(maxWidth: .infinity)
@@ -130,7 +131,7 @@ struct UploadSelfiesView: View {
 
     private var tipsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Tips for best results")
+            Text(L10n.Shoot.tipsTitle)
                 .font(.headline)
 
             VStack(alignment: .leading, spacing: 8) {

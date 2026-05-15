@@ -9,10 +9,10 @@ import SwiftUI
 
 @MainActor
 final class ProcessingViewModel: ObservableObject {
-    @Published var message: String = "Preparing..."
+    @Published var message: String = L10n.Progress.preparing
     @Published var progress: Double = 0.15
     @Published var showAlert = false
-    @Published var alertTitle = "Error"
+    @Published var alertTitle = L10n.Common.error
     @Published var alertMessage = ""
     @Published var isRunning = true
     @Published private(set) var completedSuccessfully = false
@@ -39,7 +39,7 @@ final class ProcessingViewModel: ObservableObject {
         completedSuccessfully = false
         isRunning = true
         progress = 0.15
-        message = "Preparing..."
+        message = L10n.Progress.preparing
         startPipelineTask(dependencies: dependencies, coordinator: coordinator, onSuccess: onSuccess)
     }
 
@@ -90,7 +90,7 @@ final class ProcessingViewModel: ObservableObject {
 
             charged = false
             progress = 1.0
-            message = "Done"
+            message = L10n.Progress.done
             completedSuccessfully = true
             isRunning = false
             print("[ProcessingViewModel] success path=\(url.path)")
@@ -128,28 +128,27 @@ final class ProcessingViewModel: ObservableObject {
         case .predictionFailed(let detail):
             let lower = detail.lowercased()
             if lower.contains("sensitive") || lower.contains("flagged") || lower.contains("nsfw") {
-                alertTitle = "Couldn't generate"
-                alertMessage =
-                    "The provider flagged this request. Try another selfie, a different vibe, or a neutral background."
+                alertTitle = L10n.Alerts.couldntGenerate
+                alertMessage = L10n.Alerts.flaggedRequest
             } else {
-                alertTitle = "Couldn't generate"
+                alertTitle = L10n.Alerts.couldntGenerate
                 alertMessage = detail.isEmpty ? (error.errorDescription ?? "") : detail
             }
         default:
-            alertTitle = "Error"
+            alertTitle = L10n.Common.error
             alertMessage = error.errorDescription ?? String(describing: error)
         }
         showAlert = true
     }
 
     private func present(error: LocalizedError) {
-        alertTitle = "Error"
+        alertTitle = L10n.Common.error
         alertMessage = error.errorDescription ?? String(describing: error)
         showAlert = true
     }
 
     private func present(message: String) {
-        alertTitle = "Error"
+        alertTitle = L10n.Common.error
         alertMessage = message
         showAlert = true
     }

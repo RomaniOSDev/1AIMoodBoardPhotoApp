@@ -20,11 +20,11 @@ struct StyleSelectionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Choose style direction")
+                Text(L10n.Style.title)
                     .font(.title2.bold())
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Describe your custom edit")
+                    Text(L10n.Style.customHeading)
                         .font(.headline)
 
                     ZStack(alignment: .topLeading) {
@@ -42,7 +42,7 @@ struct StyleSelectionView: View {
                             .padding(.vertical, 8)
 
                         if customPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                            Text("Describe how you want your selfie to change — lighting, outfit vibe, background, mood…")
+                            Text(L10n.Style.placeholder)
                                 .font(.body)
                                 .foregroundStyle(.tertiary)
                                 .padding(.horizontal, 14)
@@ -51,12 +51,12 @@ struct StyleSelectionView: View {
                         }
                     }
 
-                    Text("Example: Keep my face and hair the same, add a soft cinematic evening mood with warm lights.")
+                    Text(L10n.Style.example)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                Text("Or choose a preset")
+                Text(L10n.Style.presetsHeading)
                     .font(.headline)
 
                 LazyVGrid(columns: columns, spacing: 12) {
@@ -84,7 +84,7 @@ struct StyleSelectionView: View {
                                         .fill(Color(.secondarySystemBackground))
                                 )
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                                Text(preset.rawValue)
+                                Text(preset.localizedTitle)
                                     .font(.subheadline.weight(.medium))
                                     .foregroundStyle(.primary)
                                     .multilineTextAlignment(.center)
@@ -110,7 +110,7 @@ struct StyleSelectionView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("Step 2 of 3")
+                Text(L10n.Shoot.step2)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.secondary)
             }
@@ -121,7 +121,7 @@ struct StyleSelectionView: View {
                 coordinator.customPrompt = customPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
                 coordinator.push(.processing)
             } label: {
-                CustomButtonView(text: "Continue")
+                CustomButtonView(text: L10n.Common.continueAction)
             }
             .buttonStyle(.plain)
             .disabled(!canContinue)

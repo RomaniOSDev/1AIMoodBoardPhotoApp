@@ -20,16 +20,18 @@ enum AIError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidAPIKey: return "Missing or invalid API key."
-        case .invalidURL: return "Invalid URL."
-        case .invalidResponse(let code, let body): return "HTTP \(code): \(body ?? "")"
-        case .decodingFailed(let detail): return "Decoding failed: \(detail)"
+        case .invalidAPIKey: return L10n.Ai.missingAPIKey
+        case .invalidURL: return L10n.Ai.invalidURL
+        case .invalidResponse(let code, let body):
+            return String(format: L10n.Ai.httpFormat, locale: .current, code, body ?? "")
+        case .decodingFailed(let detail):
+            return String(format: L10n.Ai.decodingFailedFormat, locale: .current, detail)
         case .network(let error): return error.localizedDescription
-        case .missingDownloadURL: return "Upload did not return a download URL."
-        case .missingTaskID: return "No task id from server."
-        case .predictionFailed(let s): return s.isEmpty ? "Generation was rejected." : s
-        case .timeout: return "Request timed out."
-        case .emptyOutputs: return "No image output from AI."
+        case .missingDownloadURL: return L10n.Ai.missingDownload
+        case .missingTaskID: return L10n.Ai.noTaskID
+        case .predictionFailed(let s): return s.isEmpty ? L10n.Ai.generationRejected : s
+        case .timeout: return L10n.Ai.timeout
+        case .emptyOutputs: return L10n.Ai.noOutput
         case .mockFailure(let s): return s
         }
     }

@@ -37,4 +37,13 @@ final class NewShootCoordinator: ObservableObject {
         customPrompt = ""
         generatedFileURL = nil
     }
+
+    /// Title persisted with the generated photo (localized preset or trimmed custom prompt).
+    var resolvedShootTitleForSave: String? {
+        if let selectedVibe { return selectedVibe.localizedTitle }
+        let trimmed = customPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty { return nil }
+        if trimmed.count <= 80 { return trimmed }
+        return String(trimmed.prefix(80)) + "…"
+    }
 }

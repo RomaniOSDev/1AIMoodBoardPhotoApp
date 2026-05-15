@@ -19,19 +19,31 @@ struct RootView: View {
             TabView(selection: $selectedTab) {
                 HomeView()
                     .tabItem {
-                        Label("Home", systemImage: "house.fill")
+                        Label {
+                            Text(L10n.Tab.home)
+                        } icon: {
+                            Image(systemName: "house.fill")
+                        }
                     }
                     .tag(0)
 
                 MyPhotosView()
                     .tabItem {
-                        Label("My Photos", systemImage: "photo.on.rectangle.angled")
+                        Label {
+                            Text(L10n.Tab.myPhotos)
+                        } icon: {
+                            Image(systemName: "photo.on.rectangle.angled")
+                        }
                     }
                     .tag(1)
 
                 ProfileView()
                     .tabItem {
-                        Label("Profile", systemImage: "person.fill")
+                        Label {
+                            Text(L10n.Tab.profile)
+                        } icon: {
+                            Image(systemName: "person.fill")
+                        }
                     }
                     .tag(2)
             }
@@ -121,11 +133,11 @@ private struct OutOfBananasOverlay: View {
                     .scaledToFit()
                     .frame(width: 52, height: 52)
 
-                Text("You're out of bananas")
+                Text(L10n.Banana.outTitle)
                     .font(AppFont.custom(26, weight: .bold))
                     .multilineTextAlignment(.center)
 
-                Text("Buy more bananas to continue creating new shots.")
+                Text(L10n.Banana.outMessage)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
@@ -134,7 +146,7 @@ private struct OutOfBananasOverlay: View {
                 Button {
                     onPurchase()
                 } label: {
-                    CustomButtonView(text: "Go to Purchase")
+                    CustomButtonView(text: L10n.Banana.goPurchase)
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 4)
@@ -142,7 +154,7 @@ private struct OutOfBananasOverlay: View {
                 Button {
                     onClose()
                 } label: {
-                    Text("Close")
+                    Text(L10n.Common.close)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -190,16 +202,16 @@ private struct WelcomeBananaRewardAlert: View {
                     .scaledToFit()
                     .frame(width: 46, height: 46)
 
-                Text("Welcome!")
+                Text(L10n.Banana.welcomeTitle)
                     .font(AppFont.custom(28, weight: .bold))
-                Text("You received 1 banana.")
+                Text(L10n.Banana.welcomeMessage)
                     .font(.headline)
                     .foregroundStyle(.secondary)
 
                 Button {
                     onDismiss()
                 } label: {
-                    CustomButtonView(text: "Continue")
+                    CustomButtonView(text: L10n.Common.continueAction)
                 }
                 .buttonStyle(.plain)
                 .padding(.top, 6)

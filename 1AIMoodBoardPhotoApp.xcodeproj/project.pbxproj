@@ -57,6 +57,8 @@
 		30697F732FB2604300EF45FD /* PlayfairDisplay-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30697F392FB2604300EF45FD /* PlayfairDisplay-Italic.ttf */; };
 		30697F742FB2604300EF45FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 30697F432FB2604300EF45FD /* Assets.xcassets */; };
 		30697F752FB2604300EF45FD /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 30697F442FB2604300EF45FD /* Configuration.storekit */; };
+		30697F762FB2604300EF45FD /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F772FB2604300EF45FD /* L10n.swift */; };
+		30697F782FB2604300EF45FD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 30697F792FB2604300EF45FD /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +112,8 @@
 		30697F412FB2604300EF45FD /* PhotoAlbumSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoAlbumSaver.swift; sourceTree = "<group>"; };
 		30697F432FB2604300EF45FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		30697F442FB2604300EF45FD /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
+		30697F772FB2604300EF45FD /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		30697F792FB2604300EF45FD /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		30D287CB2FA2BE2D008D5BDC /* 1AIMoodBoardPhotoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 1AIMoodBoardPhotoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AE9EFB32A131E0203AE0EF /* Pods-1AIMoodBoardPhotoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; path = "Target Support Files/Pods-1AIMoodBoardPhotoApp/Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; sourceTree = "<group>"; };
 		C50F35F092D7E25B73DDE672 /* Pods_1AIMoodBoardPhotoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_1AIMoodBoardPhotoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -315,6 +319,7 @@
 				30697F3F2FB2604300EF45FD /* ImagePicker.swift */,
 				30697F402FB2604300EF45FD /* KeychainHelper.swift */,
 				30697F412FB2604300EF45FD /* PhotoAlbumSaver.swift */,
+				30697F772FB2604300EF45FD /* L10n.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -331,6 +336,7 @@
 				30697F422FB2604300EF45FD /* Utilities */,
 				30697F432FB2604300EF45FD /* Assets.xcassets */,
 				30697F442FB2604300EF45FD /* Configuration.storekit */,
+				30697F792FB2604300EF45FD /* Localizable.xcstrings */,
 			);
 			path = 1AIMoodBoardPhotoApp;
 			sourceTree = "<group>";
@@ -413,6 +419,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				ru,
 				Base,
 			);
 			mainGroup = 30D287C22FA2BE2D008D5BDC;
@@ -437,6 +444,7 @@
 				30697F732FB2604300EF45FD /* PlayfairDisplay-Italic.ttf in Resources */,
 				30697F742FB2604300EF45FD /* Assets.xcassets in Resources */,
 				30697F752FB2604300EF45FD /* Configuration.storekit in Resources */,
+				30697F782FB2604300EF45FD /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -516,6 +524,7 @@
 				30697F6F2FB2604300EF45FD /* ImagePicker.swift in Sources */,
 				30697F702FB2604300EF45FD /* KeychainHelper.swift in Sources */,
 				30697F712FB2604300EF45FD /* PhotoAlbumSaver.swift in Sources */,
+				30697F762FB2604300EF45FD /* L10n.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

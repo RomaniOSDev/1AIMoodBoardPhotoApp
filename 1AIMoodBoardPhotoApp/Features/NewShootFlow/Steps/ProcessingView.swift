@@ -51,7 +51,7 @@ struct ProcessingView: View {
                         viewModel.cancelGeneration()
                         coordinator.pop()
                     } label: {
-                        Text("Cancel")
+                        Text(L10n.Processing.cancel)
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -62,7 +62,7 @@ struct ProcessingView: View {
                     .padding(.bottom, 18)
                 } else if !viewModel.completedSuccessfully {
                     
-                    Button("Try again") {
+                    Button(L10n.Common.tryAgain) {
                         Task {
                             await viewModel.retry(
                                 dependencies: dependencies,
@@ -93,7 +93,7 @@ struct ProcessingView: View {
             )
         }
         .alert(viewModel.alertTitle, isPresented: $viewModel.showAlert) {
-            Button("Try again") {
+            Button(L10n.Common.tryAgain) {
                 Task {
                     await viewModel.retry(
                         dependencies: dependencies,
@@ -104,7 +104,7 @@ struct ProcessingView: View {
                     )
                 }
             }
-            Button("Cancel", role: .cancel) {
+            Button(L10n.Common.cancel, role: .cancel) {
                 coordinator.pop()
             }
         } message: {
@@ -168,7 +168,7 @@ struct ProcessingView: View {
     let coordinator = NewShootCoordinator()
     let viewModel = ProcessingViewModel()
     viewModel.progress = 0.5
-    viewModel.message = "Generating"
+    viewModel.message = L10n.Progress.generating
     viewModel.isRunning = true
 
     return ProcessingView(

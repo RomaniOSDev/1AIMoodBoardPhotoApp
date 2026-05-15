@@ -23,7 +23,7 @@ struct MyPhotosView: View {
         NavigationStack {
             VStack {
                 HStack {
-                    Text("My Photos")
+                    Text(L10n.MyPhotos.title)
                         .font(AppFont.custom(32, weight: .bold))
 
                     Spacer()
@@ -52,14 +52,14 @@ struct MyPhotosView: View {
             .overlay {
                 if viewModel.photos.isEmpty {
                     VStack(spacing: 14) {
-                        Text("You haven't added any photos yet")
+                        Text(L10n.MyPhotos.emptyTitle)
                             .font(AppFont.custom(24, weight: .heavy))
-                                  Text("Take your first photo")
-                                .font(.subheadline)
+                        Text(L10n.MyPhotos.emptySubtitle)
+                            .font(.subheadline)
                         Button {
                             startNewShootIfPossible()
                         } label: {
-                            CustomButtonView(image: "plus", text: "Create Shot")
+                            CustomButtonView(image: "plus", text: L10n.MyPhotos.createShot)
                         }
                         .buttonStyle(.plain)
                         .padding(.horizontal, 28)
@@ -70,8 +70,8 @@ struct MyPhotosView: View {
                 viewModel.bindRepository(dependencies.repository(context: modelContext))
                 viewModel.load()
             }
-            .alert("Error", isPresented: $viewModel.showError) {
-                Button("OK", role: .cancel) {}
+            .alert(L10n.Common.error, isPresented: $viewModel.showError) {
+                Button(L10n.Common.ok, role: .cancel) {}
             } message: {
                 Text(viewModel.errorMessage)
             }
@@ -135,7 +135,7 @@ private struct PhotoThumbnail: View {
                     .aspectRatio(3 / 4, contentMode: .fit)
             }
 
-            Text(photo.session?.shootTitle ?? "Untitled prompt")
+            Text(photo.session?.shootTitle ?? L10n.MyPhotos.untitledPrompt)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.primary)
                 .lineLimit(2)
@@ -174,17 +174,17 @@ struct PhotoDetailSheet: View {
                     Button {
                         Task { await saveToGallery() }
                     } label: {
-                        CustomButtonView(text: "Save to Gallery")
+                        CustomButtonView(text: L10n.MyPhotos.saveGallery)
                     }
                     ShareLink(item: fileURL) {
-                        CustomButtonView(image: "square.and.arrow.up", text: "Share")
+                        CustomButtonView(image: "square.and.arrow.up", text: L10n.MyPhotos.share)
                         
                     }
 
                     Button(role: .destructive) {
                         showDeleteConfirmation = true
                     } label: {
-                        CustomButtonView(image: "trash.fill", text: "Delete Photo")
+                        CustomButtonView(image: "trash.fill", text: L10n.MyPhotos.deletePhoto)
                             .opacity(0.9)
                     }
                 }
@@ -194,25 +194,25 @@ struct PhotoDetailSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close") { dismiss() }
+                    Button(L10n.Common.close) { dismiss() }
                 }
             }
-            .alert("Error", isPresented: $showError) {
-                Button("OK", role: .cancel) {}
+            .alert(L10n.Common.error, isPresented: $showError) {
+                Button(L10n.Common.ok, role: .cancel) {}
             } message: {
                 Text(errorMessage)
             }
             .confirmationDialog(
-                "Delete this photo?",
+                L10n.MyPhotos.deleteConfirmTitle,
                 isPresented: $showDeleteConfirmation,
                 titleVisibility: .visible
             ) {
-                Button("Delete", role: .destructive) {
+                Button(L10n.Common.delete, role: .destructive) {
                     deletePhoto()
                 }
-                Button("Cancel", role: .cancel) {}
+                Button(L10n.Common.cancel, role: .cancel) {}
             } message: {
-                Text("This action cannot be undone.")
+                Text(L10n.MyPhotos.deleteConfirmMessage)
             }
         }
     }

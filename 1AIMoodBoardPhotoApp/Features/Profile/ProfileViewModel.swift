@@ -32,7 +32,7 @@ final class ProfileViewModel: ObservableObject {
     func restore(dependencies: AppDependencies) async {
         do {
             try await dependencies.storeKitManager.restorePurchases()
-            restoreMessage = "Sync finished. For consumables (bananas), automatic restore is limited by Apple policy."
+            restoreMessage = L10n.Profile.restoreDone
             showRestoreAlert = true
         } catch {
             restoreMessage = error.localizedDescription
@@ -51,7 +51,7 @@ final class ProfileViewModel: ObservableObject {
             UserDefaults.standard.set(0, forKey: Constants.Stats.totalSpentKey)
             UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
             UserDefaults.standard.set(false, forKey: Constants.firstLaunchBananaGrantedKey)
-            resetMessage = "All app data has been reset."
+            resetMessage = L10n.Profile.resetDone
             showResetAlert = true
             return true
         } catch {

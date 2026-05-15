@@ -128,7 +128,7 @@ actor AIService {
             return "https://mock.local/result.png"
         case .live:
             guard let pollURL = resultPollURL else {
-                throw AIError.mockFailure("Missing result poll URL.")
+                throw AIError.mockFailure(L10n.Ai.missingPollURL)
             }
             for attempt in 1 ... Constants.maxPollAttempts {
                 let data = try await http.getAuthorizedData(url: pollURL)
@@ -147,10 +147,10 @@ actor AIService {
                 // Non-linear progress: reaches ~80% around 10-12 attempts (typical), then slows down.
                 let eased = 1.0 - exp(-Double(attempt) / 4.0)
                 let pollProgress = 0.30 + eased * 0.58
-                onProgress?(GenerationProgress(value: min(max(pollProgress, 0), 0.90), label: "Generating"))
+                onProgress?(GenerationProgress(value: min(max(pollProgress, 0), 0.90), label: L10n.Progress.generating))
 
                 if let output = firstOutput(from: snapshot.outputs) {
-                    onProgress?(GenerationProgress(value: 0.90, label: "Finalizing"))
+                    onProgress?(GenerationProgress(value: 0.90, label: L10n.Progress.finalizing))
                     return output
                 }
 
@@ -213,32 +213,32 @@ actor AIService {
         onProgress: (@Sendable (GenerationProgress) -> Void)? = nil
     ) async throws -> URL {
         guard selfieImages.count == 1 else {
-            throw AIError.mockFailure("Add exactly one photo of yourself.")
+            throw AIError.mockFailure(L10n.Ai.validationOneSelfie)
         }
         let trimmedPrompt = customPrompt?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         guard stylePreset != nil || !trimmedPrompt.isEmpty else {
-            throw AIError.mockFailure("Select a style preset or enter a custom prompt.")
+            throw AIError.mockFailure(L10n.Ai.validationPresetOrPrompt)
         }
 
         let styleName = stylePreset?.rawValue ?? "none"
         print("[AIService] generateShoot mode=\(mode) style=\(styleName) customPrompt=\(!trimmedPrompt.isEmpty)")
-        onProgress?(GenerationProgress(value: 0.06, label: "Preparing"))
+        onProgress?(GenerationProgress(value: 0.06, label: L10n.Progress.preparing))
 
         let prompt = Self.buildPrompt(stylePreset: stylePreset, customPrompt: trimmedPrompt)
         let selfieData = try preparedJPEGData(from: selfieImages[0])
         let uploadItems: [(String, Data)] = [("selfie", selfieData)]
         let uploadedURLs = try await uploadAllParallel(items: uploadItems)
-        onProgress?(GenerationProgress(value: 0.22, label: "Uploaded"))
+        onProgress?(GenerationProgress(value: 0.22, label: L10n.Progress.uploaded))
 
         let submitOutcome = try await submitEdit(imageURLs: uploadedURLs, prompt: prompt)
-        onProgress?(GenerationProgress(value: 0.30, label: "Queued"))
+        onProgress?(GenerationProgress(value: 0.30, label: L10n.Progress.queued))
         let output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL, onProgress: onProgress)
-        onProgress?(GenerationProgress(value: 0.94, label: "Downloading"))
+        onProgress?(GenerationProgress(value: 0.94, label: L10n.Progress.downloading))
         let imageData = try await downloadImage(from: output)
 
         let localURL = documentsDirectory().appendingPathComponent("generated_\(UUID().uuidString).png")
         try imageData.write(to: localURL, options: .atomic)
-        onProgress?(GenerationProgress(value: 1.0, label: "Done"))
+        onProgress?(GenerationProgress(value: 1.0, label: L10n.Progress.done))
         print("[AIService] generateShoot saved=\(localURL.path)")
         return localURL
     }

@@ -26,7 +26,7 @@ struct HomeView: View {
                 VStack{
                     //MARK: - Top bar
                     HStack{
-                        Text("Aesthetic AI")
+                        Text(L10n.Home.title)
                             .font(AppFont.custom(40, weight: .bold))
                         
                         Spacer()
@@ -42,7 +42,7 @@ struct HomeView: View {
                                 })
                                 .padding(.top, 42)
                             } else {
-                                Text("Latest Shoot")
+                                Text(L10n.Home.latestShoot)
                                     .font(AppFont.custom(24, weight: .heavy))
                                 if let latestSession {
                                     LatestShootCard(session: latestSession)
@@ -51,10 +51,10 @@ struct HomeView: View {
                                 Button {
                                     startNewShootIfPossible()
                                 } label: {
-                                    CustomButtonView(image: "plus", text: "New Shot")
+                                    CustomButtonView(image: "plus", text: L10n.Home.newShot)
                                 }
                                 
-                                Text("My Shots")
+                                Text(L10n.Home.myShots)
                                     .font(AppFont.custom(24, weight: .heavy))
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 20) {
@@ -80,7 +80,7 @@ struct HomeView: View {
                                     .padding(.vertical, 14)
                                 }
 
-                                Text("Trending Aesthetics")
+                                Text(L10n.Home.trending)
                                     .font(AppFont.custom(24, weight: .heavy))
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 20) {
@@ -110,8 +110,8 @@ struct HomeView: View {
                         viewModel.bindRepository(dependencies.repository(context: modelContext))
                         viewModel.load()
                     }
-                    .alert("Error", isPresented: $viewModel.showError) {
-                        Button("OK", role: .cancel) {}
+                    .alert(L10n.Common.error, isPresented: $viewModel.showError) {
+                        Button(L10n.Common.ok, role: .cancel) {}
                     } message: {
                         Text(viewModel.errorMessage ?? "")
                     }
@@ -201,17 +201,17 @@ private struct MyShotsMoreCard: View {
                     }
 
                     VStack(spacing: 3) {
-                        Text("All photos")
+                        Text(L10n.Home.allPhotosCardTitle)
                             .font(AppFont.custom(17, weight: .bold))
                             .foregroundStyle(.primary)
-                        Text("Your gallery")
+                        Text(L10n.Home.allPhotosCardSubtitle)
                             .font(.caption2.weight(.medium))
                             .foregroundStyle(.secondary)
                     }
                     .multilineTextAlignment(.center)
 
                     HStack(spacing: 5) {
-                        Text("Open")
+                        Text(L10n.Home.allPhotosOpen)
                             .font(.caption.weight(.semibold))
                         Image(systemName: "chevron.right")
                             .font(.caption.weight(.bold))
@@ -247,7 +247,7 @@ private struct MyShotsMoreCard: View {
                     )
             )
 
-            Text("All Photos")
+            Text(L10n.Home.allPhotosFooter)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(Color.pinkApp)
                 .lineLimit(1)
@@ -297,7 +297,7 @@ private struct LatestShootCard: View {
                 }
                 Text(session.createdAt.formatted(date: .abbreviated, time: .shortened))
                     .font(.subheadline)
-                Text("\(session.generatedCount) photo(s)")
+                Text(L10n.Home.sessionPhotoCount(session.generatedCount))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -366,7 +366,7 @@ private struct SessionShotCard: View {
                 .frame(width: 140, height: 185)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            Text(session.shootTitle?.isEmpty == false ? session.shootTitle! : "Untitled")
+            Text(session.shootTitle?.isEmpty == false ? session.shootTitle! : L10n.Home.untitled)
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
                 .frame(width: 140, alignment: .leading)
@@ -447,7 +447,7 @@ private struct TrendingAestheticCard: View {
             .frame(width: 140, height: 185)
             .clipShape(RoundedRectangle(cornerRadius: 12))
 
-            Text(vibe.rawValue)
+            Text(vibe.localizedTitle)
                 .font(.caption.weight(.semibold))
                 .lineLimit(1)
                 .frame(width: 140, alignment: .leading)

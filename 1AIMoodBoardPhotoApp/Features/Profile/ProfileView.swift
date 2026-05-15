@@ -26,7 +26,7 @@ struct ProfileView: View {
                 ScrollView {
                     VStack(spacing: 14) {
                     HStack {
-                        Text("Profile")
+                        Text(L10n.Profile.title)
                             .font(AppFont.custom(32, weight: .bold))
 
                         Spacer()
@@ -38,9 +38,9 @@ struct ProfileView: View {
                             .opacity(0.7)
                     }
 
-                        ProfileCard(title: "Bananas") {
+                        ProfileCard(title: L10n.Profile.cardBananas) {
                             HStack {
-                                Text("Balance")
+                                Text(L10n.Profile.balance)
                                 Spacer()
                                 Image("bananmini")
                                     .resizable()
@@ -55,7 +55,7 @@ struct ProfileView: View {
                                 showBananaStore = true
                             } label: {
                                 ProfileActionButtonLabel(
-                                    title: "Buy bananas",
+                                    title: L10n.Profile.buyBananas,
                                     icon: "cart.fill"
                                 )
                             }
@@ -65,7 +65,7 @@ struct ProfileView: View {
                                 Task { await viewModel.restore(dependencies: dependencies) }
                             } label: {
                                 ProfileActionButtonLabel(
-                                    title: "Restore Purchases",
+                                    title: L10n.Profile.restore,
                                     icon: "arrow.clockwise"
                                 )
                             }
@@ -82,7 +82,7 @@ struct ProfileView: View {
                                     Task { await dependencies.storeKitManager.loadProducts() }
                                 } label: {
                                     ProfileActionButtonLabel(
-                                        title: "Reload products",
+                                        title: L10n.Profile.reloadProducts,
                                         icon: "arrow.triangle.2.circlepath"
                                     )
                                 }
@@ -91,50 +91,50 @@ struct ProfileView: View {
                             }
                         }
 
-                        ProfileCard(title: "Activity") {
+                        ProfileCard(title: L10n.Profile.activity) {
                             HStack {
-                                Text("Generations in library")
+                                Text(L10n.Profile.generationsLibrary)
                                 Spacer()
                                 Text("\(libraryPhotoCount)")
                                     .foregroundStyle(.secondary)
                             }
                             HStack {
-                                Text("Bananas spent (lifetime)")
+                                Text(L10n.Profile.bananasSpent)
                                 Spacer()
                                 Text("\(bananaManager.totalBananasSpentStatistic)")
                                     .foregroundStyle(.secondary)
                             }
                         }
 
-                        ProfileCard(title: "Support") {
+                        ProfileCard(title: L10n.Profile.support) {
                             Button {
                                 rateApp()
                             } label: {
-                                ProfileActionButtonLabel(title: "Rate Us", icon: "star.fill")
+                                ProfileActionButtonLabel(title: L10n.Profile.rate, icon: "star.fill")
                             }
                             .buttonStyle(.plain)
 
                             Button {
                                 openURL(AppLinks.privacyPolicy)
                             } label: {
-                                ProfileActionButtonLabel(title: "Privacy", icon: "lock.fill")
+                                ProfileActionButtonLabel(title: L10n.Profile.privacy, icon: "lock.fill")
                             }
                             .buttonStyle(.plain)
 
                             Button {
                                 openURL(AppLinks.termsOfUse)
                             } label: {
-                                ProfileActionButtonLabel(title: "Terms", icon: "doc.text.fill")
+                                ProfileActionButtonLabel(title: L10n.Profile.terms, icon: "doc.text.fill")
                             }
                             .buttonStyle(.plain)
                         }
 
-                        ProfileCard(title: "Danger Zone") {
+                        ProfileCard(title: L10n.Profile.danger) {
                             Button(role: .destructive) {
                                 showResetConfirmation = true
                             } label: {
                                 ProfileActionButtonLabel(
-                                    title: "Reset all data",
+                                    title: L10n.Profile.resetAll,
                                     icon: "trash.fill",
                                     destructive: true
                                 )
@@ -148,27 +148,27 @@ struct ProfileView: View {
                 .onAppear {
                     libraryPhotoCount = viewModel.generationCount(repository: dependencies.repository(context: modelContext))
                 }
-                .alert("Purchase", isPresented: $viewModel.showPurchaseError) {
-                    Button("OK", role: .cancel) {}
+                .alert(L10n.Profile.alertPurchase, isPresented: $viewModel.showPurchaseError) {
+                    Button(L10n.Common.ok, role: .cancel) {}
                 } message: {
                     Text(viewModel.purchaseErrorMessage)
                 }
-                .alert("Restore", isPresented: $viewModel.showRestoreAlert) {
-                    Button("OK", role: .cancel) {}
+                .alert(L10n.Profile.alertRestore, isPresented: $viewModel.showRestoreAlert) {
+                    Button(L10n.Common.ok, role: .cancel) {}
                 } message: {
                     Text(viewModel.restoreMessage)
                 }
-                .alert("Reset Data", isPresented: $viewModel.showResetAlert) {
-                    Button("OK", role: .cancel) {}
+                .alert(L10n.Profile.alertReset, isPresented: $viewModel.showResetAlert) {
+                    Button(L10n.Common.ok, role: .cancel) {}
                 } message: {
                     Text(viewModel.resetMessage)
                 }
                 .confirmationDialog(
-                    "This will remove all generated photos, sessions, and reset your balance/stats.",
+                    L10n.Profile.resetDialogTitle,
                     isPresented: $showResetConfirmation,
                     titleVisibility: .visible
                 ) {
-                    Button("Reset all data", role: .destructive) {
+                    Button(L10n.Profile.resetAll, role: .destructive) {
                         Task {
                             let didReset = await viewModel.resetAllData(
                                 dependencies: dependencies,
@@ -179,7 +179,7 @@ struct ProfileView: View {
                             }
                         }
                     }
-                    Button("Cancel", role: .cancel) {}
+                    Button(L10n.Common.cancel, role: .cancel) {}
                 }
                 .sheet(isPresented: $showBananaStore) {
                     BananaStoreSheetView(dependencies: dependencies, viewModel: viewModel)

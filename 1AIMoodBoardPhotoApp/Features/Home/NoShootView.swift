@@ -26,16 +26,16 @@ struct NoShootView: View {
                     Spacer()
                 }
                 VStack(alignment: .leading,spacing: 15) {
-                    Text("Create your first AI photo shoot")
+                    Text(L10n.Home.emptyCreateFirst)
                         .font(.system(size: 24, weight: .light, design: .monospaced))
-                    Text("Upload your mood board and get 20 lifestyle photos in minutes.")
+                    Text(L10n.Home.emptySubtitle)
                         .font(.system(size: 14, weight: .light, design: .default))
                         .opacity(0.4)
                 }
                 Button {
                     action()
                 } label: {
-                    CustomButtonView(text: "Start Shoot")
+                    CustomButtonView(text: L10n.Home.emptyStartShot)
                 }
             }
             .padding()

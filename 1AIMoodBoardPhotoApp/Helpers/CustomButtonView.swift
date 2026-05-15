@@ -54,8 +54,8 @@ struct CustomButtonView: View {
 
 #Preview {
     VStack(spacing: 14) {
-        CustomButtonView(image: "plus", text: "Start Shoot")
-        CustomButtonView(text: "Continue")
+        CustomButtonView(image: "plus", text: L10n.Home.emptyStartShot)
+        CustomButtonView(text: L10n.Common.continueAction)
             .opacity(0.55)
     }
     .padding()

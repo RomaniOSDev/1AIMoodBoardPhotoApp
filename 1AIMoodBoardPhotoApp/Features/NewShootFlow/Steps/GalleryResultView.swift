@@ -35,7 +35,7 @@ struct GalleryResultView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .padding(.horizontal)
                     } else {
-                        ContentUnavailableView("No image", systemImage: "photo")
+                        ContentUnavailableView(L10n.Gallery.noImage, systemImage: "photo")
                     }
                     
                     VStack(spacing: 12) {
@@ -43,14 +43,14 @@ struct GalleryResultView: View {
                             coordinator.resetFlow()
                             completeFlowFromResult()
                         } label: {
-                            CustomButtonView(text: "Generate New")
+                            CustomButtonView(text: L10n.Gallery.generateNew)
                             
                         }
                         
                         
                         if let localURL {
                             ShareLink(item: localURL) {
-                                CustomButtonView(image: "square.and.arrow.up", text: "Share")
+                                CustomButtonView(image: "square.and.arrow.up", text: L10n.MyPhotos.share)
                                 
                             }
                         }
@@ -68,7 +68,7 @@ struct GalleryResultView: View {
                                 }
                             }
                         } label: {
-                            CustomButtonView(text: "Save to Photos")
+                            CustomButtonView(text: L10n.Gallery.savePhotos)
                             
                         }
                         
@@ -76,7 +76,7 @@ struct GalleryResultView: View {
                             coordinator.resetFlow()
                             completeFlowFromResult()
                         } label: {
-                            CustomButtonView(text: "Close")
+                            CustomButtonView(text: L10n.Common.close)
                             
                         }
                     }
@@ -88,7 +88,7 @@ struct GalleryResultView: View {
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text("Step 3 of 3")
+                    Text(L10n.Shoot.step3)
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(.secondary)
                 }
@@ -99,11 +99,11 @@ struct GalleryResultView: View {
                 await viewModel.saveSessionIfNeeded(
                     localURL: localURL,
                     repository: dependencies.repository(context: modelContext),
-                    shootTitle: coordinator.selectedVibe?.rawValue
+                    shootTitle: coordinator.resolvedShootTitleForSave
                 )
             }
-            .alert("Error", isPresented: $viewModel.showError) {
-                Button("OK", role: .cancel) {}
+            .alert(L10n.Common.error, isPresented: $viewModel.showError) {
+                Button(L10n.Common.ok, role: .cancel) {}
             } message: {
                 Text(viewModel.errorMessage)
             }
@@ -112,7 +112,7 @@ struct GalleryResultView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.green)
-                        Text("Saved to Photos")
+                        Text(L10n.Gallery.savedToast)
                             .font(.subheadline.weight(.semibold))
                     }
                     .padding(.horizontal, 14)

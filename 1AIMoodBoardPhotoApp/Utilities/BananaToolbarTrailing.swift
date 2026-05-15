@@ -46,7 +46,7 @@ struct BananaToolbarTrailing: View {
                     .foregroundStyle(.orange)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Buy bananas")
+            .accessibilityLabel(L10n.Banana.toolbarBuyA11y)
         }
         .padding(10)
         .background(

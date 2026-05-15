@@ -37,7 +37,7 @@ struct NewShootFlowContainer: View {
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Close") {
+                Button(L10n.Shoot.close) {
                     coordinator.resetFlow()
                     onComplete()
                 }

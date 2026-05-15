@@ -75,4 +75,20 @@ enum VibePreset: String, CaseIterable, Identifiable, Hashable, Sendable {
         case .streetMinimal: return "streetMinimal"
         }
     }
+
+    /// UI label (localized). `rawValue` stays English for stable logging if needed.
+    var localizedTitle: String {
+        switch self {
+        case .cleanGirl: return L10n.Vibe.cleanGirl
+        case .oldMoney: return L10n.Vibe.oldMoney
+        case .darkAcademia: return L10n.Vibe.darkAcademia
+        case .y2k: return L10n.Vibe.y2k
+        case .coastal: return L10n.Vibe.coastal
+        case .cottagecore: return L10n.Vibe.cottagecore
+        case .mobWife: return L10n.Vibe.mobWife
+        case .sportyChic: return L10n.Vibe.sportyChic
+        case .softGlam: return L10n.Vibe.softGlam
+        case .streetMinimal: return L10n.Vibe.streetMinimal
+        }
+    }
 }

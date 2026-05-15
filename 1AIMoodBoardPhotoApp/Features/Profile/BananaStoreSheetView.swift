@@ -24,13 +24,13 @@ struct BananaStoreSheetView: View {
                         .foregroundStyle(.pinkApp)
                         .opacity(0.5)
                         
-                    Text("Bananas - your currency for images")
+                    Text(L10n.Store.headline)
                         .font(AppFont.custom(24, weight: .bold))
                         .frame(maxWidth: 250)
                         .lineLimit(2)
                         .multilineTextAlignment(.center)
                         .minimumScaleFactor(0.8)
-                    Text("1 banana = 1 image\nCreate images in seconds")
+                    Text(L10n.Store.subline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                         .minimumScaleFactor(0.5)
@@ -83,7 +83,7 @@ struct BananaStoreSheetView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Buy Bananas")
+            .navigationTitle(L10n.Store.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

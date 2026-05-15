@@ -16,10 +16,10 @@ enum StoreError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .productUnavailable: return "Product is unavailable."
+        case .productUnavailable: return L10n.Store.errorUnavailable
         case .purchaseFailed(let message): return message
-        case .verificationFailed: return "Purchase verification failed."
-        case .userCancelled: return "Purchase cancelled."
+        case .verificationFailed: return L10n.Store.errorVerifyFailed
+        case .userCancelled: return L10n.Store.errorCancelled
         }
     }
 }
@@ -55,7 +55,7 @@ enum BananaPack: CaseIterable, Identifiable, Sendable {
         }
     }
 
-    var title: String { "\(bananas) bananas" }
+    var title: String { L10n.Store.packTitle(bananas: bananas) }
 }
 
 @MainActor
@@ -90,7 +90,7 @@ final class StoreKitManager: ObservableObject {
             print("[StoreKit] requested productIDs=\(productIDs)")
             print("[StoreKit] loaded products: \(products.map(\.id))")
             if products.isEmpty {
-                loadErrorMessage = "No products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration."
+                loadErrorMessage = L10n.StoreKitConfig.noProductsLoaded
                 print("[StoreKit] warning: no products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration and product ids.")
             } else {
                 loadErrorMessage = nil
