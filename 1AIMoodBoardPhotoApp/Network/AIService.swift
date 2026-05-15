@@ -32,12 +32,13 @@ actor AIService {
 
     // MARK: - Public API
 
-    nonisolated static func buildPrompt(stylePreset: VibePreset?, hasReferenceImage: Bool) -> String {
+    nonisolated static func buildPrompt(stylePreset: VibePreset?, customPrompt: String?) -> String {
         let base =
             "The first image is one person in everyday clothing. Generate a NEW vertical lifestyle photograph (9:16) of the same individual; keep face and overall likeness consistent; fully clothed, modest styling."
         let style = stylePreset.map { "Style direction: \($0.promptFragment)" } ?? "Style direction: modern, clean lifestyle portrait."
-        let ref = hasReferenceImage ? "If a second image is provided, use it only as visual style reference (colors, mood, outfit direction), not identity." : ""
-        return [base, style, ref, "Clean composition, relaxed pose, crisp detail. No text, logos, or watermarks."]
+        let trimmedCustom = (customPrompt ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let custom = trimmedCustom.isEmpty ? "" : "Custom edit request: \(trimmedCustom)"
+        return [base, style, custom, "Clean composition, relaxed pose, crisp detail. No text, logos, or watermarks."]
             .filter { !$0.isEmpty }
             .joined(separator: " ")
     }
@@ -204,31 +205,28 @@ actor AIService {
         }
     }
 
-    /// One selfie + optional style preset and optional reference image.
+    /// One selfie + optional style preset + optional custom prompt text.
     func generateShoot(
         selfieImages: [UIImage],
         stylePreset: VibePreset?,
-        referenceImage: UIImage?,
+        customPrompt: String?,
         onProgress: (@Sendable (GenerationProgress) -> Void)? = nil
     ) async throws -> URL {
         guard selfieImages.count == 1 else {
             throw AIError.mockFailure("Add exactly one photo of yourself.")
         }
-        guard stylePreset != nil || referenceImage != nil else {
-            throw AIError.mockFailure("Add a reference photo or select a style preset.")
+        let trimmedPrompt = customPrompt?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        guard stylePreset != nil || !trimmedPrompt.isEmpty else {
+            throw AIError.mockFailure("Select a style preset or enter a custom prompt.")
         }
 
         let styleName = stylePreset?.rawValue ?? "none"
-        let hasRef = referenceImage != nil
-        print("[AIService] generateShoot mode=\(mode) style=\(styleName) reference=\(hasRef)")
+        print("[AIService] generateShoot mode=\(mode) style=\(styleName) customPrompt=\(!trimmedPrompt.isEmpty)")
         onProgress?(GenerationProgress(value: 0.06, label: "Preparing"))
 
-        let prompt = Self.buildPrompt(stylePreset: stylePreset, hasReferenceImage: hasRef)
+        let prompt = Self.buildPrompt(stylePreset: stylePreset, customPrompt: trimmedPrompt)
         let selfieData = try preparedJPEGData(from: selfieImages[0])
-        var uploadItems: [(String, Data)] = [("selfie", selfieData)]
-        if let referenceImage {
-            uploadItems.append(("reference", try preparedJPEGData(from: referenceImage)))
-        }
+        let uploadItems: [(String, Data)] = [("selfie", selfieData)]
         let uploadedURLs = try await uploadAllParallel(items: uploadItems)
         onProgress?(GenerationProgress(value: 0.22, label: "Uploaded"))
 

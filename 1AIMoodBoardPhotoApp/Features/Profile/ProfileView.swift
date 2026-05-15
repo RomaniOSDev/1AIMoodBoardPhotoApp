@@ -185,6 +185,9 @@ struct ProfileView: View {
                     BananaStoreSheetView(dependencies: dependencies, viewModel: viewModel)
                         .presentationDetents([.fraction(0.75), .large])
                 }
+                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("openBananaStore"))) { _ in
+                    showBananaStore = true
+                }
             
         }
     }

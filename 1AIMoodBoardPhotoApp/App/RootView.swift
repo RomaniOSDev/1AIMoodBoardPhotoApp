@@ -12,6 +12,7 @@ struct RootView: View {
     @State private var showOnboarding = false
     @State private var selectedTab = 0
     @State private var showWelcomeBananaAlert = false
+    @State private var showOutOfBananasOverlay = false
 
     var body: some View {
         ZStack {
@@ -49,10 +50,42 @@ struct RootView: View {
                 .transition(.scale(scale: 0.93).combined(with: .opacity))
                 .zIndex(1)
             }
+
+            if showOutOfBananasOverlay {
+                Color.black.opacity(0.42)
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+
+                OutOfBananasOverlay(
+                    onClose: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showOutOfBananasOverlay = false
+                        }
+                    },
+                    onPurchase: {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            showOutOfBananasOverlay = false
+                            selectedTab = 2
+                        }
+                        DispatchQueue.main.async {
+                            NotificationCenter.default.post(name: Notification.Name("openBananaStore"), object: nil)
+                        }
+                    }
+                )
+                .padding(.horizontal, 24)
+                .transition(.scale(scale: 0.94).combined(with: .opacity))
+                .zIndex(2)
+            }
         }
         .environment(\.mainTabSelection, $selectedTab)
         .onAppear {
             showOnboarding = !onboardingViewModel.hasCompletedOnboarding
+        }
+        .onReceive(NotificationCenter.default.publisher(for: Notification.Name("showOutOfBananasOverlay"))) { _ in
+            guard !showOnboarding else { return }
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.86)) {
+                showOutOfBananasOverlay = true
+            }
         }
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView(viewModel: onboardingViewModel) {
@@ -70,6 +103,69 @@ struct RootView: View {
         withAnimation(.spring(response: 0.34, dampingFraction: 0.85)) {
             showWelcomeBananaAlert = true
         }
+    }
+}
+
+private struct OutOfBananasOverlay: View {
+    let onClose: () -> Void
+    let onPurchase: () -> Void
+
+    var body: some View {
+        ZStack {
+            RewardBananaBackground()
+                .allowsHitTesting(false)
+
+            VStack(spacing: 12) {
+                Image("bananmini")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 52, height: 52)
+
+                Text("You're out of bananas")
+                    .font(AppFont.custom(26, weight: .bold))
+                    .multilineTextAlignment(.center)
+
+                Text("Buy more bananas to continue creating new shots.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 6)
+
+                Button {
+                    onPurchase()
+                } label: {
+                    CustomButtonView(text: "Go to Purchase")
+                }
+                .buttonStyle(.plain)
+                .padding(.top, 4)
+
+                Button {
+                    onClose()
+                } label: {
+                    Text("Close")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(18)
+        }
+        .frame(maxWidth: 360)
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color(.systemBackground).opacity(0.95))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .stroke(Color.pinkApp.opacity(0.32), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.2), radius: 16, x: 0, y: 8)
+                .shadow(color: Color.pinkApp.opacity(0.14), radius: 8, x: 0, y: 0)
+        )
     }
 }
 

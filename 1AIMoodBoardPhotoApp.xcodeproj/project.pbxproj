@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		301217C52FB7C7DB0071B4BB /* AppsFlyerLib-Static in Frameworks */ = {isa = PBXBuildFile; productRef = 301217C42FB7C7DB0071B4BB /* AppsFlyerLib-Static */; };
 		3063E2F92FA7EAC70071A61B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3063E2F82FA7EAC60071A61B /* StoreKit.framework */; };
 		30697F462FB2604300EF45FD /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F022FB2604300EF45FD /* AppDependencies.swift */; };
 		30697F472FB2604300EF45FD /* MoodBoardApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F032FB2604300EF45FD /* MoodBoardApp.swift */; };
@@ -120,6 +121,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3063E2F92FA7EAC70071A61B /* StoreKit.framework in Frameworks */,
+				301217C52FB7C7DB0071B4BB /* AppsFlyerLib-Static in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,6 +416,9 @@
 				Base,
 			);
 			mainGroup = 30D287C22FA2BE2D008D5BDC;
+			packageReferences = (
+				301217C32FB7C7DB0071B4BB /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */,
+			);
 			productRefGroup = 30D287CC2FA2BE2D008D5BDC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -643,10 +648,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
 				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
@@ -660,7 +666,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -684,10 +690,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
 				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
@@ -701,7 +708,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -740,6 +747,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		301217C32FB7C7DB0071B4BB /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppsFlyerSDK/AppsFlyerFramework-Static";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.18.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		301217C42FB7C7DB0071B4BB /* AppsFlyerLib-Static */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 301217C32FB7C7DB0071B4BB /* XCRemoteSwiftPackageReference "AppsFlyerFramework-Static" */;
+			productName = "AppsFlyerLib-Static";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 30D287C32FA2BE2D008D5BDC /* Project object */;
 }

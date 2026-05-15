@@ -41,7 +41,7 @@ struct GalleryResultView: View {
                     VStack(spacing: 12) {
                         Button {
                             coordinator.resetFlow()
-                            onDone()
+                            completeFlowFromResult()
                         } label: {
                             CustomButtonView(text: "Generate New")
                             
@@ -74,7 +74,7 @@ struct GalleryResultView: View {
                         
                         Button {
                             coordinator.resetFlow()
-                            onDone()
+                            completeFlowFromResult()
                         } label: {
                             CustomButtonView(text: "Close")
                             
@@ -122,6 +122,15 @@ struct GalleryResultView: View {
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
+        }
+    }
+
+    private func completeFlowFromResult() {
+        let shouldUpsell = dependencies.bananaManager.balance <= 0
+        onDone()
+        guard shouldUpsell else { return }
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Notification.Name("showOutOfBananasOverlay"), object: nil)
         }
     }
 }

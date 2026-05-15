@@ -24,7 +24,12 @@ final class ShootSession {
 
     var generatedCount: Int { photos.count }
 
+    /// Newest generated image in this session (same as thumbnail source).
+    var newestPhoto: GeneratedPhoto? {
+        photos.max(by: { $0.createdAt < $1.createdAt })
+    }
+
     var thumbnailRelativePath: String? {
-        photos.sorted { $0.createdAt > $1.createdAt }.first?.localRelativePath
+        newestPhoto?.localRelativePath
     }
 }

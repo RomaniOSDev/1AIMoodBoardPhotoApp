@@ -17,7 +17,7 @@ final class NewShootCoordinator: ObservableObject {
     @Published var path = NavigationPath()
     @Published var selfieImages: [UIImage] = []
     @Published var selectedVibe: VibePreset?
-    @Published var referenceStyleImage: UIImage?
+    @Published var customPrompt: String = ""
     @Published var generatedFileURL: URL?
 
     func push(_ screen: Screen) {
@@ -34,7 +34,7 @@ final class NewShootCoordinator: ObservableObject {
         path = NavigationPath()
         selfieImages = []
         selectedVibe = nil
-        referenceStyleImage = nil
+        customPrompt = ""
         generatedFileURL = nil
     }
 }

@@ -75,7 +75,7 @@ final class ProcessingViewModel: ObservableObject {
             let url = try await dependencies.aiService.generateShoot(
                 selfieImages: coordinator.selfieImages,
                 stylePreset: coordinator.selectedVibe,
-                referenceImage: coordinator.referenceStyleImage,
+                customPrompt: coordinator.customPrompt,
                 onProgress: { [weak self] update in
                     Task { @MainActor in
                         guard let self else { return }

@@ -128,9 +128,6 @@ struct ProcessingView: View {
         if let selfie = coordinator.selfieImages.first {
             return selfie
         }
-        if let reference = coordinator.referenceStyleImage {
-            return reference
-        }
         if let asset = UIImage(named: "pre1") {
             return asset
         }

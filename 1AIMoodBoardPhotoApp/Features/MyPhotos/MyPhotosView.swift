@@ -57,7 +57,7 @@ struct MyPhotosView: View {
                                   Text("Take your first photo")
                                 .font(.subheadline)
                         Button {
-                            showNewShoot = true
+                            startNewShootIfPossible()
                         } label: {
                             CustomButtonView(image: "plus", text: "Create Shot")
                         }
@@ -103,6 +103,14 @@ struct MyPhotosView: View {
             }
         }
     }
+
+    private func startNewShootIfPossible() {
+        if dependencies.bananaManager.balance <= 0 {
+            NotificationCenter.default.post(name: Notification.Name("showOutOfBananasOverlay"), object: nil)
+            return
+        }
+        showNewShoot = true
+    }
 }
 
 private struct PhotoThumbnail: View {
@@ -136,7 +144,7 @@ private struct PhotoThumbnail: View {
     }
 }
 
-private struct PhotoDetailSheet: View {
+struct PhotoDetailSheet: View {
     let photo: GeneratedPhoto
     let fileURL: URL
     let repository: ShootRepository

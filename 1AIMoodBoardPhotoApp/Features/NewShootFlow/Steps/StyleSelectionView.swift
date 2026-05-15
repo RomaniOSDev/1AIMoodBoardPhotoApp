@@ -4,19 +4,17 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct StyleSelectionView: View {
     @ObservedObject var coordinator: NewShootCoordinator
 
     @State private var selectedPreset: VibePreset?
-    @State private var referenceImage: UIImage?
-    @State private var showPicker = false
+    @State private var customPrompt = ""
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
     private var canContinue: Bool {
-        selectedPreset != nil || referenceImage != nil
+        selectedPreset != nil || !customPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     var body: some View {
@@ -26,44 +24,36 @@ struct StyleSelectionView: View {
                     .font(.title2.bold())
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Reference photo (optional)")
+                    Text("Describe your custom edit")
                         .font(.headline)
 
-                    Button {
-                        showPicker = true
-                    } label: {
-                        if let referenceImage {
-                            Image(uiImage: referenceImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 180)
-                                .clipped()
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        } else {
-                            VStack(spacing: 10) {
-                                Image(systemName: "photo.badge.plus")
-                                    .font(.title2)
-                                Text("Attach reference")
-                                    .font(.subheadline.weight(.medium))
-                            }
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 150)
-                            .background(
+                    ZStack(alignment: .topLeading) {
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.secondarySystemBackground))
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(style: StrokeStyle(lineWidth: 2, dash: [8]))
-                                    .foregroundStyle(Color.secondary.opacity(0.5))
+                                    .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
                             )
-                        }
-                    }
-                    .buttonStyle(.plain)
 
-                    if referenceImage != nil {
-                        Button("Remove reference") {
-                            referenceImage = nil
+                        TextEditor(text: $customPrompt)
+                            .frame(minHeight: 120)
+                            .scrollContentBackground(.hidden)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 8)
+
+                        if customPrompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            Text("Describe how you want your selfie to change — lighting, outfit vibe, background, mood…")
+                                .font(.body)
+                                .foregroundStyle(.tertiary)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 16)
+                                .allowsHitTesting(false)
                         }
-                        .font(.subheadline.weight(.medium))
                     }
+
+                    Text("Example: Keep my face and hair the same, add a soft cinematic evening mood with warm lights.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
 
                 Text("Or choose a preset")
@@ -128,7 +118,7 @@ struct StyleSelectionView: View {
         .safeAreaInset(edge: .bottom) {
             Button {
                 coordinator.selectedVibe = selectedPreset
-                coordinator.referenceStyleImage = referenceImage
+                coordinator.customPrompt = customPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
                 coordinator.push(.processing)
             } label: {
                 CustomButtonView(text: "Continue")
@@ -138,14 +128,9 @@ struct StyleSelectionView: View {
             .padding()
             .background(.ultraThinMaterial)
         }
-        .sheet(isPresented: $showPicker) {
-            ImagePicker(selectionLimit: 1) { picked in
-                referenceImage = picked.first
-            }
-        }
         .onAppear {
             selectedPreset = coordinator.selectedVibe
-            referenceImage = coordinator.referenceStyleImage
+            customPrompt = coordinator.customPrompt
         }
     }
 }
