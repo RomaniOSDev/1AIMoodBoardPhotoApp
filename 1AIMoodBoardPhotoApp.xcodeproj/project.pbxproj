@@ -29,11 +29,9 @@
 		30697F572FB2604300EF45FD /* VibePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F182FB2604300EF45FD /* VibePreset.swift */; };
 		30697F582FB2604300EF45FD /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F1A2FB2604300EF45FD /* OnboardingView.swift */; };
 		30697F592FB2604300EF45FD /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F1B2FB2604300EF45FD /* OnboardingViewModel.swift */; };
-		30697F5A2FB2604300EF45FD /* BananaStoreSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F1D2FB2604300EF45FD /* BananaStoreSheetView.swift */; };
 		30697F5B2FB2604300EF45FD /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F1E2FB2604300EF45FD /* ProfileView.swift */; };
 		30697F5C2FB2604300EF45FD /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F1F2FB2604300EF45FD /* ProfileViewModel.swift */; };
 		30697F5D2FB2604300EF45FD /* CustomButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F222FB2604300EF45FD /* CustomButtonView.swift */; };
-		30697F5E2FB2604300EF45FD /* BananaManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F242FB2604300EF45FD /* BananaManager.swift */; };
 		30697F5F2FB2604300EF45FD /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F252FB2604300EF45FD /* StoreKitManager.swift */; };
 		30697F602FB2604300EF45FD /* APIResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F272FB2604300EF45FD /* APIResponses.swift */; };
 		30697F612FB2604300EF45FD /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F292FB2604300EF45FD /* AIService.swift */; };
@@ -48,7 +46,6 @@
 		30697F6A2FB2604300EF45FD /* View+Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F362FB2604300EF45FD /* View+Loading.swift */; };
 		30697F6B2FB2604300EF45FD /* AppFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F3B2FB2604300EF45FD /* AppFont.swift */; };
 		30697F6C2FB2604300EF45FD /* AppLinks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F3C2FB2604300EF45FD /* AppLinks.swift */; };
-		30697F6D2FB2604300EF45FD /* BananaToolbarTrailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F3D2FB2604300EF45FD /* BananaToolbarTrailing.swift */; };
 		30697F6E2FB2604300EF45FD /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F3E2FB2604300EF45FD /* Constants.swift */; };
 		30697F6F2FB2604300EF45FD /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F3F2FB2604300EF45FD /* ImagePicker.swift */; };
 		30697F702FB2604300EF45FD /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F402FB2604300EF45FD /* KeychainHelper.swift */; };
@@ -59,6 +56,13 @@
 		30697F752FB2604300EF45FD /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 30697F442FB2604300EF45FD /* Configuration.storekit */; };
 		30697F762FB2604300EF45FD /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F772FB2604300EF45FD /* L10n.swift */; };
 		30697F782FB2604300EF45FD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 30697F792FB2604300EF45FD /* Localizable.xcstrings */; };
+		30697F7A2FB2604300EF45FD /* AppTrackingCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F7B2FB2604300EF45FD /* AppTrackingCoordinator.swift */; };
+		30697F7C2FB2604300EF45FD /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 30697F7D2FB2604300EF45FD /* InfoPlist.xcstrings */; };
+		30697F802FB2604300EF45FD /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F802FB2604300EF45FE /* PaywallView.swift */; };
+		30697F812FB2604300EF45FD /* FreeTrialAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F812FB2604300EF45FE /* FreeTrialAccess.swift */; };
+		30697F822FB2604300EF45FD /* SubscriptionToolbarTrailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F822FB2604300EF45FE /* SubscriptionToolbarTrailing.swift */; };
+		30697F832FB2604300EF45FD /* AppEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F832FB2604300EF45FE /* AppEvents.swift */; };
+		30697F862FB2604300EF45FD /* MainTabSelectionEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30697F862FB2604300EF45FE /* MainTabSelectionEnvironment.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,11 +88,9 @@
 		30697F182FB2604300EF45FD /* VibePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibePreset.swift; sourceTree = "<group>"; };
 		30697F1A2FB2604300EF45FD /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		30697F1B2FB2604300EF45FD /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
-		30697F1D2FB2604300EF45FD /* BananaStoreSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BananaStoreSheetView.swift; sourceTree = "<group>"; };
 		30697F1E2FB2604300EF45FD /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		30697F1F2FB2604300EF45FD /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		30697F222FB2604300EF45FD /* CustomButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonView.swift; sourceTree = "<group>"; };
-		30697F242FB2604300EF45FD /* BananaManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BananaManager.swift; sourceTree = "<group>"; };
 		30697F252FB2604300EF45FD /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		30697F272FB2604300EF45FD /* APIResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponses.swift; sourceTree = "<group>"; };
 		30697F292FB2604300EF45FD /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
@@ -105,7 +107,6 @@
 		30697F392FB2604300EF45FD /* PlayfairDisplay-Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "PlayfairDisplay-Italic.ttf"; sourceTree = "<group>"; };
 		30697F3B2FB2604300EF45FD /* AppFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFont.swift; sourceTree = "<group>"; };
 		30697F3C2FB2604300EF45FD /* AppLinks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLinks.swift; sourceTree = "<group>"; };
-		30697F3D2FB2604300EF45FD /* BananaToolbarTrailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BananaToolbarTrailing.swift; sourceTree = "<group>"; };
 		30697F3E2FB2604300EF45FD /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		30697F3F2FB2604300EF45FD /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		30697F402FB2604300EF45FD /* KeychainHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
@@ -114,6 +115,13 @@
 		30697F442FB2604300EF45FD /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		30697F772FB2604300EF45FD /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		30697F792FB2604300EF45FD /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		30697F7B2FB2604300EF45FD /* AppTrackingCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTrackingCoordinator.swift; sourceTree = "<group>"; };
+		30697F7D2FB2604300EF45FD /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		30697F802FB2604300EF45FE /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		30697F812FB2604300EF45FE /* FreeTrialAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTrialAccess.swift; sourceTree = "<group>"; };
+		30697F822FB2604300EF45FE /* SubscriptionToolbarTrailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionToolbarTrailing.swift; sourceTree = "<group>"; };
+		30697F832FB2604300EF45FE /* AppEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEvents.swift; sourceTree = "<group>"; };
+		30697F862FB2604300EF45FE /* MainTabSelectionEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabSelectionEnvironment.swift; sourceTree = "<group>"; };
 		30D287CB2FA2BE2D008D5BDC /* 1AIMoodBoardPhotoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = 1AIMoodBoardPhotoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		41AE9EFB32A131E0203AE0EF /* Pods-1AIMoodBoardPhotoApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; path = "Target Support Files/Pods-1AIMoodBoardPhotoApp/Pods-1AIMoodBoardPhotoApp.debug.xcconfig"; sourceTree = "<group>"; };
 		C50F35F092D7E25B73DDE672 /* Pods_1AIMoodBoardPhotoApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_1AIMoodBoardPhotoApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,7 +214,6 @@
 		30697F202FB2604300EF45FD /* Profile */ = {
 			isa = PBXGroup;
 			children = (
-				30697F1D2FB2604300EF45FD /* BananaStoreSheetView.swift */,
 				30697F1E2FB2604300EF45FD /* ProfileView.swift */,
 				30697F1F2FB2604300EF45FD /* ProfileViewModel.swift */,
 			);
@@ -220,6 +227,7 @@
 				30697F0C2FB2604300EF45FD /* MyPhotos */,
 				30697F192FB2604300EF45FD /* NewShootFlow */,
 				30697F1C2FB2604300EF45FD /* Onboarding */,
+				30697F852FB2604300EF45FD /* Paywall */,
 				30697F202FB2604300EF45FD /* Profile */,
 			);
 			path = Features;
@@ -236,7 +244,7 @@
 		30697F262FB2604300EF45FD /* Monetization */ = {
 			isa = PBXGroup;
 			children = (
-				30697F242FB2604300EF45FD /* BananaManager.swift */,
+				30697F812FB2604300EF45FE /* FreeTrialAccess.swift */,
 				30697F252FB2604300EF45FD /* StoreKitManager.swift */,
 			);
 			path = Monetization;
@@ -314,12 +322,15 @@
 				30697F3A2FB2604300EF45FD /* Fonts */,
 				30697F3B2FB2604300EF45FD /* AppFont.swift */,
 				30697F3C2FB2604300EF45FD /* AppLinks.swift */,
-				30697F3D2FB2604300EF45FD /* BananaToolbarTrailing.swift */,
+				30697F832FB2604300EF45FE /* AppEvents.swift */,
+				30697F862FB2604300EF45FE /* MainTabSelectionEnvironment.swift */,
 				30697F3E2FB2604300EF45FD /* Constants.swift */,
+				30697F822FB2604300EF45FE /* SubscriptionToolbarTrailing.swift */,
 				30697F3F2FB2604300EF45FD /* ImagePicker.swift */,
 				30697F402FB2604300EF45FD /* KeychainHelper.swift */,
 				30697F412FB2604300EF45FD /* PhotoAlbumSaver.swift */,
 				30697F772FB2604300EF45FD /* L10n.swift */,
+				30697F7B2FB2604300EF45FD /* AppTrackingCoordinator.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -337,8 +348,17 @@
 				30697F432FB2604300EF45FD /* Assets.xcassets */,
 				30697F442FB2604300EF45FD /* Configuration.storekit */,
 				30697F792FB2604300EF45FD /* Localizable.xcstrings */,
+				30697F7D2FB2604300EF45FD /* InfoPlist.xcstrings */,
 			);
 			path = 1AIMoodBoardPhotoApp;
+			sourceTree = "<group>";
+		};
+		30697F852FB2604300EF45FD /* Paywall */ = {
+			isa = PBXGroup;
+			children = (
+				30697F802FB2604300EF45FE /* PaywallView.swift */,
+			);
+			path = Paywall;
 			sourceTree = "<group>";
 		};
 		30D287C22FA2BE2D008D5BDC = {
@@ -445,6 +465,7 @@
 				30697F742FB2604300EF45FD /* Assets.xcassets in Resources */,
 				30697F752FB2604300EF45FD /* Configuration.storekit in Resources */,
 				30697F782FB2604300EF45FD /* Localizable.xcstrings in Resources */,
+				30697F7C2FB2604300EF45FD /* InfoPlist.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,11 +521,11 @@
 				30697F572FB2604300EF45FD /* VibePreset.swift in Sources */,
 				30697F582FB2604300EF45FD /* OnboardingView.swift in Sources */,
 				30697F592FB2604300EF45FD /* OnboardingViewModel.swift in Sources */,
-				30697F5A2FB2604300EF45FD /* BananaStoreSheetView.swift in Sources */,
+				30697F802FB2604300EF45FD /* PaywallView.swift in Sources */,
 				30697F5B2FB2604300EF45FD /* ProfileView.swift in Sources */,
 				30697F5C2FB2604300EF45FD /* ProfileViewModel.swift in Sources */,
 				30697F5D2FB2604300EF45FD /* CustomButtonView.swift in Sources */,
-				30697F5E2FB2604300EF45FD /* BananaManager.swift in Sources */,
+				30697F812FB2604300EF45FD /* FreeTrialAccess.swift in Sources */,
 				30697F5F2FB2604300EF45FD /* StoreKitManager.swift in Sources */,
 				30697F602FB2604300EF45FD /* APIResponses.swift in Sources */,
 				30697F612FB2604300EF45FD /* AIService.swift in Sources */,
@@ -519,12 +540,15 @@
 				30697F6A2FB2604300EF45FD /* View+Loading.swift in Sources */,
 				30697F6B2FB2604300EF45FD /* AppFont.swift in Sources */,
 				30697F6C2FB2604300EF45FD /* AppLinks.swift in Sources */,
-				30697F6D2FB2604300EF45FD /* BananaToolbarTrailing.swift in Sources */,
+				30697F832FB2604300EF45FD /* AppEvents.swift in Sources */,
+				30697F862FB2604300EF45FD /* MainTabSelectionEnvironment.swift in Sources */,
+				30697F822FB2604300EF45FD /* SubscriptionToolbarTrailing.swift in Sources */,
 				30697F6E2FB2604300EF45FD /* Constants.swift in Sources */,
 				30697F6F2FB2604300EF45FD /* ImagePicker.swift in Sources */,
 				30697F702FB2604300EF45FD /* KeychainHelper.swift in Sources */,
 				30697F712FB2604300EF45FD /* PhotoAlbumSaver.swift in Sources */,
 				30697F762FB2604300EF45FD /* L10n.swift in Sources */,
+				30697F7A2FB2604300EF45FD /* AppTrackingCoordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -661,9 +685,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -675,7 +699,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -703,9 +727,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
-				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies and reference images.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
+				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
 				INFOPLIST_KEY_UIAppFonts = "Utilities/Fonts/PlayfairDisplay.ttf Utilities/Fonts/PlayfairDisplay-Italic.ttf";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -717,7 +741,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

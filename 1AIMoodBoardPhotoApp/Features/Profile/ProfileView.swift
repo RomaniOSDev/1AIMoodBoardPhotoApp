@@ -11,20 +11,21 @@ import UIKit
 struct ProfileView: View {
     @EnvironmentObject private var dependencies: AppDependencies
     @Environment(\.modelContext) private var modelContext
-    @ObservedObject private var bananaManager = BananaManager.shared
 
     @StateObject private var viewModel = ProfileViewModel()
     @State private var libraryPhotoCount = 0
-    @State private var showBananaStore = false
+    @State private var showPaywall = false
     @State private var showResetConfirmation = false
+
+    private var storeKit: StoreKitManager { dependencies.storeKitManager }
+    private var freeTrial: FreeTrialAccess { dependencies.freeTrialAccess }
 
     var body: some View {
         ZStack {
             Color.backMain.ignoresSafeArea()
 
-            
-                ScrollView {
-                    VStack(spacing: 14) {
+            ScrollView {
+                VStack(spacing: 14) {
                     HStack {
                         Text(L10n.Profile.title)
                             .font(AppFont.custom(32, weight: .bold))
@@ -38,162 +39,195 @@ struct ProfileView: View {
                             .opacity(0.7)
                     }
 
-                        ProfileCard(title: L10n.Profile.cardBananas) {
-                            HStack {
-                                Text(L10n.Profile.balance)
-                                Spacer()
-                                Image("bananmini")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 20, height: 20)
-                                Text("\(bananaManager.balance)")
-                                    .font(.title2.bold())
+                    ProfileCard(title: L10n.Profile.subscription) {
+                        HStack {
+                            Text(subscriptionStatusTitle)
+                            Spacer()
+                            if storeKit.isSubscribed {
+                                Text(L10n.Subscription.proBadge)
+                                    .font(.caption.weight(.bold))
+                                    .foregroundStyle(.white)
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                                    .background(Capsule().fill(Color.pinkApp))
                             }
-                            .padding(.bottom, 6)
+                        }
+                        .padding(.bottom, 6)
 
+                        if !storeKit.isSubscribed {
                             Button {
-                                showBananaStore = true
+                                showPaywall = true
                             } label: {
                                 ProfileActionButtonLabel(
-                                    title: L10n.Profile.buyBananas,
-                                    icon: "cart.fill"
+                                    title: L10n.Profile.upgradePremium,
+                                    icon: "crown.fill"
                                 )
                             }
                             .buttonStyle(.plain)
+                        }
 
+                        if storeKit.isSubscribed {
                             Button {
-                                Task { await viewModel.restore(dependencies: dependencies) }
+                                openManageSubscriptions()
                             } label: {
                                 ProfileActionButtonLabel(
-                                    title: L10n.Profile.restore,
-                                    icon: "arrow.clockwise"
+                                    title: L10n.Profile.manageSubscription,
+                                    icon: "creditcard.fill"
                                 )
                             }
                             .buttonStyle(.plain)
-                            .disabled(dependencies.storeKitManager.purchaseInProgress)
-
-                            if let loadError = dependencies.storeKitManager.loadErrorMessage {
-                                Text(loadError)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .padding(.top, 2)
-
-                                Button {
-                                    Task { await dependencies.storeKitManager.loadProducts() }
-                                } label: {
-                                    ProfileActionButtonLabel(
-                                        title: L10n.Profile.reloadProducts,
-                                        icon: "arrow.triangle.2.circlepath"
-                                    )
-                                }
-                                .buttonStyle(.plain)
-                                .disabled(dependencies.storeKitManager.purchaseInProgress)
-                            }
                         }
 
-                        ProfileCard(title: L10n.Profile.activity) {
-                            HStack {
-                                Text(L10n.Profile.generationsLibrary)
-                                Spacer()
-                                Text("\(libraryPhotoCount)")
-                                    .foregroundStyle(.secondary)
-                            }
-                            HStack {
-                                Text(L10n.Profile.bananasSpent)
-                                Spacer()
-                                Text("\(bananaManager.totalBananasSpentStatistic)")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-
-                        ProfileCard(title: L10n.Profile.support) {
-                            Button {
-                                rateApp()
-                            } label: {
-                                ProfileActionButtonLabel(title: L10n.Profile.rate, icon: "star.fill")
-                            }
-                            .buttonStyle(.plain)
-
-                            Button {
-                                openURL(AppLinks.privacyPolicy)
-                            } label: {
-                                ProfileActionButtonLabel(title: L10n.Profile.privacy, icon: "lock.fill")
-                            }
-                            .buttonStyle(.plain)
-
-                            Button {
-                                openURL(AppLinks.termsOfUse)
-                            } label: {
-                                ProfileActionButtonLabel(title: L10n.Profile.terms, icon: "doc.text.fill")
-                            }
-                            .buttonStyle(.plain)
-                        }
-
-                        ProfileCard(title: L10n.Profile.danger) {
-                            Button(role: .destructive) {
-                                showResetConfirmation = true
-                            } label: {
-                                ProfileActionButtonLabel(
-                                    title: L10n.Profile.resetAll,
-                                    icon: "trash.fill",
-                                    destructive: true
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .padding(.top, 2)
-                        }
-                    }
-                    .padding()
-                }
-                .onAppear {
-                    libraryPhotoCount = viewModel.generationCount(repository: dependencies.repository(context: modelContext))
-                }
-                .alert(L10n.Profile.alertPurchase, isPresented: $viewModel.showPurchaseError) {
-                    Button(L10n.Common.ok, role: .cancel) {}
-                } message: {
-                    Text(viewModel.purchaseErrorMessage)
-                }
-                .alert(L10n.Profile.alertRestore, isPresented: $viewModel.showRestoreAlert) {
-                    Button(L10n.Common.ok, role: .cancel) {}
-                } message: {
-                    Text(viewModel.restoreMessage)
-                }
-                .alert(L10n.Profile.alertReset, isPresented: $viewModel.showResetAlert) {
-                    Button(L10n.Common.ok, role: .cancel) {}
-                } message: {
-                    Text(viewModel.resetMessage)
-                }
-                .confirmationDialog(
-                    L10n.Profile.resetDialogTitle,
-                    isPresented: $showResetConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button(L10n.Profile.resetAll, role: .destructive) {
-                        Task {
-                            let didReset = await viewModel.resetAllData(
-                                dependencies: dependencies,
-                                modelContext: modelContext
+                        Button {
+                            Task { await viewModel.restore(dependencies: dependencies) }
+                        } label: {
+                            ProfileActionButtonLabel(
+                                title: L10n.Profile.restore,
+                                icon: "arrow.clockwise"
                             )
-                            if didReset {
-                                libraryPhotoCount = 0
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(storeKit.purchaseInProgress)
+
+                        if let loadError = storeKit.loadErrorMessage {
+                            Text(loadError)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .padding(.top, 2)
+
+                            Button {
+                                Task { await storeKit.loadProducts() }
+                            } label: {
+                                ProfileActionButtonLabel(
+                                    title: L10n.Profile.reloadProducts,
+                                    icon: "arrow.triangle.2.circlepath"
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(storeKit.purchaseInProgress)
+                        }
+                    }
+
+                    ProfileCard(title: L10n.Profile.activity) {
+                        HStack {
+                            Text(L10n.Profile.generationsLibrary)
+                            Spacer()
+                            Text("\(libraryPhotoCount)")
+                                .foregroundStyle(.secondary)
+                        }
+                        if !storeKit.isSubscribed, freeTrial.isActive {
+                            HStack {
+                                Text(L10n.Profile.freeTrialLabel)
+                                Spacer()
+                                Text(L10n.Subscription.freeTrialDaysFormat(freeTrial.daysRemaining))
+                                    .foregroundStyle(.secondary)
                             }
                         }
                     }
-                    Button(L10n.Common.cancel, role: .cancel) {}
+
+                    ProfileCard(title: L10n.Profile.support) {
+                        Button {
+                            rateApp()
+                        } label: {
+                            ProfileActionButtonLabel(title: L10n.Profile.rate, icon: "star.fill")
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            openURL(AppLinks.privacyPolicy)
+                        } label: {
+                            ProfileActionButtonLabel(title: L10n.Profile.privacy, icon: "lock.fill")
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            openURL(AppLinks.termsOfUse)
+                        } label: {
+                            ProfileActionButtonLabel(title: L10n.Profile.terms, icon: "doc.text.fill")
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    ProfileCard(title: L10n.Profile.danger) {
+                        Button(role: .destructive) {
+                            showResetConfirmation = true
+                        } label: {
+                            ProfileActionButtonLabel(
+                                title: L10n.Profile.resetAll,
+                                icon: "trash.fill",
+                                destructive: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .padding(.top, 2)
+                    }
                 }
-                .sheet(isPresented: $showBananaStore) {
-                    BananaStoreSheetView(dependencies: dependencies, viewModel: viewModel)
-                        .presentationDetents([.fraction(0.75), .large])
+                .padding()
+            }
+            .onAppear {
+                libraryPhotoCount = viewModel.generationCount(repository: dependencies.repository(context: modelContext))
+            }
+            .alert(L10n.Profile.alertPurchase, isPresented: $viewModel.showPurchaseError) {
+                Button(L10n.Common.ok, role: .cancel) {}
+            } message: {
+                Text(viewModel.purchaseErrorMessage)
+            }
+            .alert(L10n.Profile.alertRestore, isPresented: $viewModel.showRestoreAlert) {
+                Button(L10n.Common.ok, role: .cancel) {}
+            } message: {
+                Text(viewModel.restoreMessage)
+            }
+            .alert(L10n.Profile.alertReset, isPresented: $viewModel.showResetAlert) {
+                Button(L10n.Common.ok, role: .cancel) {}
+            } message: {
+                Text(viewModel.resetMessage)
+            }
+            .confirmationDialog(
+                L10n.Profile.resetDialogTitle,
+                isPresented: $showResetConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button(L10n.Profile.resetAll, role: .destructive) {
+                    Task {
+                        let didReset = await viewModel.resetAllData(
+                            dependencies: dependencies,
+                            modelContext: modelContext
+                        )
+                        if didReset {
+                            libraryPhotoCount = 0
+                        }
+                    }
                 }
-                .onReceive(NotificationCenter.default.publisher(for: Notification.Name("openBananaStore"))) { _ in
-                    showBananaStore = true
-                }
-            
+                Button(L10n.Common.cancel, role: .cancel) {}
+            }
+            .fullScreenCover(isPresented: $showPaywall) {
+                PaywallView(
+                    storeKit: dependencies.storeKitManager,
+                    onSubscribed: { showPaywall = false },
+                    onLimitedAccess: { showPaywall = false }
+                )
+                .environmentObject(dependencies)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: AppEvents.showPaywall)) { _ in
+                showPaywall = true
+            }
         }
+    }
+
+    private var subscriptionStatusTitle: String {
+        storeKit.isSubscribed
+            ? L10n.Profile.subscriptionActive
+            : L10n.Profile.freeTrialStatus(days: freeTrial.daysRemaining, active: freeTrial.isActive)
     }
 
     private func openURL(_ value: String) {
         if let url = URL(string: value) {
+            UIApplication.shared.open(url)
+        }
+    }
+
+    private func openManageSubscriptions() {
+        if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
             UIApplication.shared.open(url)
         }
     }
@@ -211,11 +245,11 @@ private struct ProfileCard<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-                            HStack {
+            HStack {
                 Text(title)
-                                    .font(AppFont.custom(24, weight: .heavy))
-                                Spacer()
-                            }
+                    .font(AppFont.custom(24, weight: .heavy))
+                Spacer()
+            }
             content
         }
         .padding()
@@ -288,5 +322,3 @@ private struct ProfilePreviewHost: View {
 #Preview {
     ProfilePreviewHost()
 }
-
-

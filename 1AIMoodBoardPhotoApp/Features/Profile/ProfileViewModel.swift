@@ -16,12 +16,12 @@ final class ProfileViewModel: ObservableObject {
     @Published var showResetAlert = false
     @Published var resetMessage = ""
 
-    func purchase(pack: BananaPack, dependencies: AppDependencies) async {
+    func purchase(plan: WeeklySubscriptionPlan, dependencies: AppDependencies) async {
         do {
-            try await dependencies.storeKitManager.purchase(pack: pack)
+            try await dependencies.storeKitManager.purchase(plan: plan)
         } catch let error as StoreError {
             if case .userCancelled = error { return }
-            purchaseErrorMessage = error.localizedDescription
+            purchaseErrorMessage = error.localizedDescription ?? ""
             showPurchaseError = true
         } catch {
             purchaseErrorMessage = error.localizedDescription
@@ -32,7 +32,11 @@ final class ProfileViewModel: ObservableObject {
     func restore(dependencies: AppDependencies) async {
         do {
             try await dependencies.storeKitManager.restorePurchases()
-            restoreMessage = L10n.Profile.restoreDone
+            if dependencies.storeKitManager.isSubscribed {
+                restoreMessage = L10n.Profile.restoreDone
+            } else {
+                restoreMessage = L10n.Paywall.restoreNoSubscription
+            }
             showRestoreAlert = true
         } catch {
             restoreMessage = error.localizedDescription
@@ -47,10 +51,8 @@ final class ProfileViewModel: ObservableObject {
     func resetAllData(dependencies: AppDependencies, modelContext: ModelContext) async -> Bool {
         do {
             try dependencies.repository(context: modelContext).resetAllData()
-            dependencies.bananaManager.resetToInitialBalance()
-            UserDefaults.standard.set(0, forKey: Constants.Stats.totalSpentKey)
+            dependencies.freeTrialAccess.reset()
             UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
-            UserDefaults.standard.set(false, forKey: Constants.firstLaunchBananaGrantedKey)
             resetMessage = L10n.Profile.resetDone
             showResetAlert = true
             return true

@@ -66,11 +66,9 @@ final class ProcessingViewModel: ObservableObject {
     ) async {
         defer { currentTask = nil }
         isRunning = true
-        var charged = false
 
         do {
-            try dependencies.bananaManager.chargeForGeneration()
-            charged = true
+            try dependencies.reserveGeneration()
 
             let url = try await dependencies.aiService.generateShoot(
                 selfieImages: coordinator.selfieImages,
@@ -86,37 +84,27 @@ final class ProcessingViewModel: ObservableObject {
             )
 
             coordinator.generatedFileURL = url
-            dependencies.bananaManager.recordSuccessfulGenerationSpend()
+            dependencies.confirmSuccessfulGeneration()
 
-            charged = false
             progress = 1.0
             message = L10n.Progress.done
             completedSuccessfully = true
             isRunning = false
             print("[ProcessingViewModel] success path=\(url.path)")
-            // Keep 100% visible briefly before navigation.
             try? await Task.sleep(nanoseconds: 350_000_000)
             onSuccess()
         } catch is CancellationError {
-            if charged { dependencies.bananaManager.refundGeneration() }
-            charged = false
             isRunning = false
             print("[ProcessingViewModel] cancelled")
-        } catch let error as BananaError {
-            if charged { dependencies.bananaManager.refundGeneration() }
-            charged = false
+        } catch let error as FreeTrialError {
             isRunning = false
             present(error: error)
-            print("[ProcessingViewModel] banana error: \(error)")
+            print("[ProcessingViewModel] free trial error: \(error)")
         } catch let error as AIError {
-            if charged { dependencies.bananaManager.refundGeneration() }
-            charged = false
             isRunning = false
             present(aiError: error)
             print("[ProcessingViewModel] AI error: \(error)")
         } catch {
-            if charged { dependencies.bananaManager.refundGeneration() }
-            charged = false
             isRunning = false
             present(message: error.localizedDescription)
             print("[ProcessingViewModel] error: \(error)")

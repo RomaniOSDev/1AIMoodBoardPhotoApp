@@ -1,68 +1,109 @@
 {
-  "identifier" : "BANANAS_STOREKIT",
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "PREMIUM_WEEKLY_STOREKIT",
   "nonRenewingSubscriptions" : [
 
   ],
   "products" : [
-    {
-      "displayPrice" : "2.99",
-      "familyShareable" : false,
-      "internalID" : "5BANANAS001",
-      "localizations" : [
-        {
-          "description" : "Adds 5 bananas for AI generations.",
-          "displayName" : "5 Bananas",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "5_bananas",
-      "referenceName" : "5 Bananas Pack",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "4.99",
-      "familyShareable" : false,
-      "internalID" : "10BANANAS001",
-      "localizations" : [
-        {
-          "description" : "Adds 10 bananas for AI generations.",
-          "displayName" : "10 Bananas",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "10_bananas",
-      "referenceName" : "10 Bananas Pack",
-      "type" : "Consumable"
-    },
-    {
-      "displayPrice" : "12.99",
-      "familyShareable" : false,
-      "internalID" : "30BANANAS001",
-      "localizations" : [
-        {
-          "description" : "Adds 30 bananas for AI generations.",
-          "displayName" : "30 Bananas",
-          "locale" : "en_US"
-        }
-      ],
-      "productID" : "30_bananas",
-      "referenceName" : "30 Bananas Pack",
-      "type" : "Consumable"
-    }
+
   ],
   "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
     "_failTransactionsEnabled" : false,
     "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
     "_storefront" : "USA",
     "_storeKitErrors" : [
 
-    ]
+    ],
+    "_timeRate" : 0
   },
   "subscriptionGroups" : [
+    {
+      "id" : "premium_weekly",
+      "localizations" : [
 
+      ],
+      "name" : "Premium Weekly",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "5.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "WEEKLY_TRIAL001",
+          "introductoryOffer" : {
+            "internalID" : "WEEKLY_TRIAL_INTRO",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P3D"
+          },
+          "localizations" : [
+            {
+              "description" : "Weekly access with a 3-day free trial.",
+              "displayName" : "Weekly Premium Trial",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "weekly_premium_trial",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly Premium Trial",
+          "subscriptionGroupID" : "premium_weekly",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "5.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "WEEKLY_STD001",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Weekly access, billed immediately.",
+              "displayName" : "Weekly Premium",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "weekly_premium",
+          "recurringSubscriptionPeriod" : "P1W",
+          "referenceName" : "Weekly Premium",
+          "subscriptionGroupID" : "premium_weekly",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
   ],
   "version" : {
-    "major" : 4,
+    "major" : 5,
     "minor" : 0
   }
 }

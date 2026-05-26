@@ -113,37 +113,77 @@ enum L10n {
         static var alertPurchase: String { tr("profile.alert_purchase") }
         static var alertReset: String { tr("profile.alert_reset") }
         static var alertRestore: String { tr("profile.alert_restore") }
-        static var balance: String { tr("profile.balance") }
-        static var bananasSpent: String { tr("profile.bananas_spent") }
-        static var buyBananas: String { tr("profile.buy_bananas") }
-        static var cardBananas: String { tr("profile.card_bananas") }
         static var danger: String { tr("profile.danger") }
         static var generationsLibrary: String { tr("profile.generations_library") }
+        static var manageSubscription: String { tr("profile.manage_subscription") }
         static var privacy: String { tr("profile.privacy") }
         static var rate: String { tr("profile.rate") }
-        static var reloadProducts: String { tr("profile.reload_products") }
         static var resetAll: String { tr("profile.reset_all") }
         static var resetDialogTitle: String { tr("profile.reset_dialog_title") }
         static var resetDone: String { tr("profile.reset_done") }
         static var restore: String { tr("profile.restore") }
+        static var reloadProducts: String { tr("profile.reload_products") }
         static var restoreDone: String { tr("profile.restore_done") }
+        static var subscription: String { tr("profile.subscription") }
+        static var subscriptionActive: String { tr("profile.subscription_active") }
+        static var subscriptionInactiveFormat: String { tr("profile.subscription_inactive") }
         static var support: String { tr("profile.support") }
         static var terms: String { tr("profile.terms") }
         static var title: String { tr("profile.title") }
+        static var upgradePremium: String { tr("profile.upgrade_premium") }
+        static var freeTrialLabel: String { tr("profile.free_trial_label") }
+
+        static func subscriptionInactive(remaining: Int) -> String {
+            String(format: subscriptionInactiveFormat, locale: .current, remaining)
+        }
+
+        static func freeTrialStatus(days: Int, active: Bool) -> String {
+            if active {
+                return String(format: tr("profile.free_trial_active"), locale: .current, days)
+            }
+            return tr("profile.free_trial_expired")
+        }
+    }
+
+    enum Paywall {
+        static var headline: String { tr("paywall.headline") }
+        static var freeTrialBadge: String { tr("paywall.free_trial_badge") }
+        static var trialTitle: String { tr("paywall.trial_title") }
+        static var trialSubtitle: String { tr("paywall.trial_subtitle") }
+        static var weekTitle: String { tr("paywall.week_title") }
+        static var weekSubtitle: String { tr("paywall.week_subtitle") }
+        static var limitedVersion: String { tr("paywall.limited_version") }
+        static var startTrialCTA: String { tr("paywall.start_trial_cta") }
+        static var subscribeCTA: String { tr("paywall.subscribe_cta") }
+        static var restore: String { tr("paywall.restore") }
+        static var terms: String { tr("paywall.terms") }
+        static var privacy: String { tr("paywall.privacy") }
+        static var legalNote: String { tr("paywall.legal_note") }
+        static var freeTrialExpired: String { tr("paywall.free_trial_expired") }
+        static var restoreNoSubscription: String { tr("paywall.restore_no_subscription") }
+
+        static func pricePerWeekFormat(_ price: String) -> String {
+            String(format: tr("paywall.price_per_week_format"), locale: .current, price)
+        }
+    }
+
+    enum Subscription {
+        static var proBadge: String { tr("subscription.pro_badge") }
+        static var upgradeA11y: String { tr("subscription.upgrade_a11y") }
+
+        static var upgradeBadge: String { tr("subscription.upgrade_badge") }
+
+        static func freeTrialDaysFormat(_ days: Int) -> String {
+            String(format: tr("subscription.free_trial_days_format"), locale: .current, days)
+        }
     }
 
     enum Store {
         static var errorCancelled: String { tr("store.error.cancelled") }
         static var errorUnavailable: String { tr("store.error.unavailable") }
         static var errorVerifyFailed: String { tr("store.error.verify_failed") }
-        static var headline: String { tr("store.headline") }
-        static var packFormat: String { tr("store.pack_format") }
-        static var subline: String { tr("store.subline") }
-        static var title: String { tr("store.title") }
-
-        static func packTitle(bananas: Int) -> String {
-            String(format: packFormat, locale: .current, bananas)
-        }
+        static var purchasePending: String { tr("store.purchase_pending") }
+        static var purchaseUnknown: String { tr("store.purchase_unknown") }
     }
 
     enum StoreKitConfig {

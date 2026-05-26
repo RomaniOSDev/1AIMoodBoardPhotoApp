@@ -126,11 +126,10 @@ struct GalleryResultView: View {
     }
 
     private func completeFlowFromResult() {
-        let shouldUpsell = dependencies.bananaManager.balance <= 0
         onDone()
-        guard shouldUpsell else { return }
+        guard !dependencies.storeKitManager.isSubscribed, !dependencies.canGeneratePhoto else { return }
         DispatchQueue.main.async {
-            NotificationCenter.default.post(name: Notification.Name("showOutOfBananasOverlay"), object: nil)
+            NotificationCenter.default.post(name: AppEvents.showPaywall, object: nil)
         }
     }
 }

@@ -4,14 +4,13 @@
 //
 
 import Foundation
+import CoreGraphics
 
 enum Constants {
     /// Replace with your WaveSpeed API key (prefer env/build setting in production).
     static let wavespeedAPIKey = "7ccf6b1f435db7e53d022eb21e947bd45062573393457ff5c47d8e3da310dcaf"
 
-    static let bananaProductID = "10_bananas"
-    static let initialBananaBalance = 0
-    static let generationCost = 1
+    static let freeTrialDurationDays = 3
 
     static let maxImageDimension: CGFloat = 1024
     static let jpegQuality: CGFloat = 0.8
@@ -19,32 +18,24 @@ enum Constants {
     static let pollIntervalSeconds: UInt64 = 2
     static let maxPollAttempts = 30
 
-    /// Max wait between bytes (slow CDN / congested links). Must be high or downloads hit `NSURLErrorTimedOut` (-1001).
     static let outputDownloadRequestTimeoutSeconds: TimeInterval = 1200
-    /// Total wall time allowed for the full file transfer.
     static let outputDownloadResourceTimeoutSeconds: TimeInterval = 1800
-    /// Retries when CloudFront returns transient timeouts.
     static let outputDownloadMaxAttempts: Int = 3
 
     static let onboardingCompletedKey = "onboarding_completed"
-    static let firstLaunchBananaGrantedKey = "first_launch_banana_granted"
 
-    /// Toggle live WaveSpeed API vs offline mock pipeline (see AIService).
     static let aiUseLiveNetwork = true
 
-    enum BananaKeychain {
-        static let service = "home.-AIMoodBoardPhotoApp.bananas"
-        static let account = "balance"
+    enum SubscriptionProducts {
+        /// Weekly with 3-day free trial (intro offer configured in App Store Connect / StoreKit file).
+        static let weeklyWithTrial = "weekly_premium_trial"
+        /// Weekly billed immediately, no trial.
+        static let weeklyNoTrial = "weekly_premium"
+        static let all = [weeklyWithTrial, weeklyNoTrial]
+        static let groupID = "premium_weekly"
     }
 
-    enum BananaProducts {
-        static let five = "5_banana"
-        static let ten = "10_bananas"
-        static let thirty = "30_bananas"
-        static let all = [five, ten, thirty]
-    }
-
-    enum Stats {
-        static let totalSpentKey = "total_bananas_spent"
+    enum FreeTrial {
+        static let endDateKey = "free_trial_end_date"
     }
 }

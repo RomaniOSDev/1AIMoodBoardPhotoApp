@@ -5,8 +5,6 @@
 
 import Foundation
 
-extension Notification.Name {
-    static let showOutOfBananasOverlay = Notification.Name("showOutOfBananasOverlay")
-    static let openBananaStore = Notification.Name("openBananaStore")
+enum AppEvents {
+    static let showPaywall = Notification.Name("showPaywall")
 }
-

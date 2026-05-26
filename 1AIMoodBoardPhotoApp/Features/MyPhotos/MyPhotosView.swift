@@ -28,7 +28,9 @@ struct MyPhotosView: View {
 
                     Spacer()
 
-                    BananaToolbarTrailing()
+                    SubscriptionToolbarTrailing {
+                        NotificationCenter.default.post(name: AppEvents.showPaywall, object: nil)
+                    }
                 }
 
                 ScrollView {
@@ -105,8 +107,8 @@ struct MyPhotosView: View {
     }
 
     private func startNewShootIfPossible() {
-        if dependencies.bananaManager.balance <= 0 {
-            NotificationCenter.default.post(name: Notification.Name("showOutOfBananasOverlay"), object: nil)
+        guard dependencies.canGeneratePhoto else {
+            NotificationCenter.default.post(name: AppEvents.showPaywall, object: nil)
             return
         }
         showNewShoot = true
