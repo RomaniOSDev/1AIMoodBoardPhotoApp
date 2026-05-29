@@ -10,6 +10,7 @@ struct StyleSelectionView: View {
 
     @State private var selectedPreset: VibePreset?
     @State private var customPrompt = ""
+    @State private var showAIConsent = false
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -119,7 +120,7 @@ struct StyleSelectionView: View {
             Button {
                 coordinator.selectedVibe = selectedPreset
                 coordinator.customPrompt = customPrompt.trimmingCharacters(in: .whitespacesAndNewlines)
-                coordinator.push(.processing)
+                proceedToProcessing()
             } label: {
                 CustomButtonView(text: L10n.Common.continueAction)
             }
@@ -128,9 +129,30 @@ struct StyleSelectionView: View {
             .padding()
             .background(.ultraThinMaterial)
         }
+        .sheet(isPresented: $showAIConsent) {
+            AIProcessingConsentView(
+                onAgree: {
+                    AIProcessingConsent.grant()
+                    showAIConsent = false
+                    coordinator.push(.processing)
+                },
+                onCancel: {
+                    showAIConsent = false
+                }
+            )
+            .presentationDetents([.large])
+        }
         .onAppear {
             selectedPreset = coordinator.selectedVibe
             customPrompt = coordinator.customPrompt
+        }
+    }
+
+    private func proceedToProcessing() {
+        if AIProcessingConsent.hasGranted {
+            coordinator.push(.processing)
+        } else {
+            showAIConsent = true
         }
     }
 }

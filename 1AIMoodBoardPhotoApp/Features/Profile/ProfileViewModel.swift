@@ -52,6 +52,7 @@ final class ProfileViewModel: ObservableObject {
         do {
             try dependencies.repository(context: modelContext).resetAllData()
             dependencies.freeTrialAccess.reset()
+            AIProcessingConsent.reset()
             UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
             resetMessage = L10n.Profile.resetDone
             showResetAlert = true

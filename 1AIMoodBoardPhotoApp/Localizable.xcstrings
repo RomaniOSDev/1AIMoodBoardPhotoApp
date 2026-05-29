@@ -210,6 +210,193 @@
         }
       }
     },
+    "ai.consent.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI Processing Consent"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Согласие на обработку AI"
+          }
+        }
+      }
+    },
+    "ai.consent.message": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To create your AI photo, Banana must send some of your data to a third-party AI service. We do not send any data until you tap Agree & Continue."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Чтобы создать AI-фото, Banana отправляет часть ваших данных стороннему AI-сервису. Данные не отправляются, пока вы не нажмёте «Согласен и продолжить»."
+          }
+        }
+      }
+    },
+    "ai.consent.data_heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What we send"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Что отправляется"
+          }
+        }
+      }
+    },
+    "ai.consent.data_selfie": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your selfie photo"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваше селфи"
+          }
+        }
+      }
+    },
+    "ai.consent.data_style": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The style preset you selected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбранный пресет стиля"
+          }
+        }
+      }
+    },
+    "ai.consent.data_prompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any custom text prompt you enter"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваш текстовый промпт (если вы его вводили)"
+          }
+        }
+      }
+    },
+    "ai.consent.recipient_heading": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "AI processing"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обработка AI"
+          }
+        }
+      }
+    },
+    "ai.consent.recipient_body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your photo and prompts are sent to a third-party AI service to generate your image."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ваше фото и промпты передаются в сторонний AI-сервис для генерации изображения."
+          }
+        }
+      }
+    },
+    "ai.consent.footer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You can withdraw consent by not using AI generation. For details on collection, use, and retention, see our Privacy Policy."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Вы можете отказаться, не используя AI-генерацию. Подробности о сборе, использовании и хранении данных — в Политике конфиденциальности."
+          }
+        }
+      }
+    },
+    "ai.consent.privacy_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read Privacy Policy"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Политика конфиденциальности"
+          }
+        }
+      }
+    },
+    "ai.consent.agree": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agree & Continue"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Согласен и продолжить"
+          }
+        }
+      }
+    },
     "alert.couldnt_generate": {
       "extractionState": "manual",
       "localizations": {
@@ -1310,7 +1497,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Отмена"
+            "value": "Отменить"
           }
         }
       }

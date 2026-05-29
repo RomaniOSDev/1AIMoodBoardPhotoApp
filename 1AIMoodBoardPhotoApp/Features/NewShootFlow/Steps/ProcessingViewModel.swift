@@ -45,6 +45,7 @@ final class ProcessingViewModel: ObservableObject {
 
     func cancelGeneration() {
         currentTask?.cancel()
+        isRunning = false
     }
 
     private func startPipelineTask(

@@ -209,6 +209,20 @@ enum L10n {
         static var missingPollURL: String { tr("ai.error.missing_poll_url") }
     }
 
+    enum AIConsent {
+        static var title: String { tr("ai.consent.title") }
+        static var message: String { tr("ai.consent.message") }
+        static var dataHeading: String { tr("ai.consent.data_heading") }
+        static var dataSelfie: String { tr("ai.consent.data_selfie") }
+        static var dataStyle: String { tr("ai.consent.data_style") }
+        static var dataPrompt: String { tr("ai.consent.data_prompt") }
+        static var recipientHeading: String { tr("ai.consent.recipient_heading") }
+        static var recipientBody: String { tr("ai.consent.recipient_body") }
+        static var footer: String { tr("ai.consent.footer") }
+        static var privacyLink: String { tr("ai.consent.privacy_link") }
+        static var agree: String { tr("ai.consent.agree") }
+    }
+
     enum Alerts {
         static var couldntGenerate: String { tr("alert.couldnt_generate") }
         static var flaggedRequest: String { tr("alert.flagged_request") }

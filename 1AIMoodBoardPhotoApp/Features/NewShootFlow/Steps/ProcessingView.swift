@@ -36,54 +36,39 @@ struct ProcessingView: View {
 
     var body: some View {
         ZStack {
-            
             backgroundLayer
 
             VStack {
                 Spacer()
-
                 progressCenter
-
                 Spacer()
-
-                if viewModel.isRunning {
-                    Button(role: .cancel) {
-                        viewModel.cancelGeneration()
-                        coordinator.pop()
-                    } label: {
-                        Text(L10n.Processing.cancel)
-                            .font(.headline)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 14)
-                            .foregroundStyle(.pinkApp)
-                    }
-                    .buttonStyle(.bordered)
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 18)
-                } else if !viewModel.completedSuccessfully {
-                    
-                    Button(L10n.Common.tryAgain) {
-                        Task {
-                            await viewModel.retry(
-                                dependencies: dependencies,
-                                coordinator: coordinator,
-                                onSuccess: {
-                                    coordinator.push(.galleryResult)
-                                }
-                            )
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .padding(.bottom, 18)
-                }
-                
             }
             .padding()
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
+        .toolbarBackground(.hidden, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                if viewModel.isRunning {
+                    Button(L10n.Processing.cancel, role: .cancel) {
+                        cancelAndGoBack()
+                    }
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(.white)
+                }
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            bottomActions
+        }
         .task {
             guard autoStartGeneration else { return }
+            guard AIProcessingConsent.hasGranted else {
+                coordinator.pop()
+                return
+            }
             await viewModel.startIfNeeded(
                 dependencies: dependencies,
                 coordinator: coordinator,
@@ -104,24 +89,101 @@ struct ProcessingView: View {
                     )
                 }
             }
-            Button(L10n.Common.cancel, role: .cancel) {
-                coordinator.pop()
+            Button(L10n.Processing.cancel, role: .cancel) {
+                cancelAndGoBack()
             }
         } message: {
             Text(viewModel.alertMessage)
         }
     }
 
-    @ViewBuilder private var backgroundLayer: some View {
-        if let source = backgroundImage {
-            Image(uiImage: source)
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .blur(radius: 28)
-                .overlay(Color.black.opacity(0.18))
-        } else {
-            Color.black.opacity(0.85)
+    @ViewBuilder
+    private var bottomActions: some View {
+        Group {
+            if viewModel.isRunning {
+                processingSecondaryButton(title: L10n.Processing.cancel, action: cancelAndGoBack)
+            } else if !viewModel.completedSuccessfully {
+                VStack(spacing: 12) {
+                    Button {
+                        Task {
+                            await viewModel.retry(
+                                dependencies: dependencies,
+                                coordinator: coordinator,
+                                onSuccess: {
+                                    coordinator.push(.galleryResult)
+                                }
+                            )
+                        }
+                    } label: {
+                        CustomButtonView(text: L10n.Common.tryAgain)
+                    }
+                    .buttonStyle(.plain)
+
+                    processingSecondaryButton(title: L10n.Processing.cancel, action: cancelAndGoBack)
+                }
+            }
         }
+        .padding(.horizontal, 24)
+        .padding(.top, 28)
+        .padding(.bottom, 28)
+        .safeAreaPadding(.bottom, 4)
+        .frame(maxWidth: .infinity)
+        .background(processingBottomScrim)
+    }
+
+    private var processingBottomScrim: some View {
+        LinearGradient(
+            colors: [
+                Color.black.opacity(0),
+                Color.black.opacity(0.45),
+                Color.black.opacity(0.72)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .ignoresSafeArea(edges: .bottom)
+    }
+
+    private func processingSecondaryButton(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(AppFont.custom(17, weight: .semibold))
+                .foregroundStyle(.white.opacity(0.95))
+                .frame(maxWidth: .infinity)
+                .frame(height: 52)
+                .background(
+                    RoundedRectangle(cornerRadius: 26, style: .continuous)
+                        .fill(Color.white.opacity(0.14))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 26, style: .continuous)
+                                .stroke(Color.white.opacity(0.32), lineWidth: 1)
+                        )
+                )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func cancelAndGoBack() {
+        viewModel.cancelGeneration()
+        coordinator.pop()
+    }
+
+    @ViewBuilder
+    private var backgroundLayer: some View {
+        Group {
+            if let source = backgroundImage {
+                Image(uiImage: source)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
+                    .blur(radius: 28)
+                    .overlay(Color.black.opacity(0.35))
+            } else {
+                Color.black.opacity(0.85)
+            }
+        }
+        .ignoresSafeArea()
     }
 
     private var backgroundImage: UIImage? {
@@ -137,7 +199,6 @@ struct ProcessingView: View {
     private var progressCenter: some View {
         VStack(spacing: 14) {
             ZStack {
-
                 Circle()
                     .trim(from: 0, to: max(min(viewModel.progress, 1), 0))
                     .stroke(
