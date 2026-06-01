@@ -220,6 +220,7 @@ enum L10n {
         static var recipientBody: String { tr("ai.consent.recipient_body") }
         static var footer: String { tr("ai.consent.footer") }
         static var privacyLink: String { tr("ai.consent.privacy_link") }
+        static var termsLink: String { tr("ai.consent.terms_link") }
         static var agree: String { tr("ai.consent.agree") }
     }
 

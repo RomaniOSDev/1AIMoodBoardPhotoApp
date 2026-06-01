@@ -233,13 +233,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To create your AI photo, Banana must send some of your data to a third-party AI service. We do not send any data until you tap Agree & Continue."
+            "value": "To create your AI photo, we send your selfie, selected style, and any text prompt to WaveSpeed (wavespeed.ai), our AI platform provider. WaveSpeed processes your data using the Nano Banana image generation model. We do not send any data until you tap Agree & Continue."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Чтобы создать AI-фото, Banana отправляет часть ваших данных стороннему AI-сервису. Данные не отправляются, пока вы не нажмёте «Согласен и продолжить»."
+            "value": "Для создания AI-фото мы передаём селфи, выбранный стиль и текстовый промпт в WaveSpeed (wavespeed.ai) — платформу AI-провайдера. WaveSpeed обрабатывает данные с помощью модели генерации изображений Nano Banana. Данные не отправляются, пока вы не нажмёте «Согласен и продолжить»."
           }
         }
       }
@@ -318,13 +318,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "AI processing"
+            "value": "Who receives your data"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Обработка AI"
+            "value": "Кому передаются данные"
           }
         }
       }
@@ -335,13 +335,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Your photo and prompts are sent to a third-party AI service to generate your image."
+            "value": "Recipient: WaveSpeed (wavespeed.ai). Image generation is performed using the Nano Banana AI model."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ваше фото и промпты передаются в сторонний AI-сервис для генерации изображения."
+            "value": "Получатель: WaveSpeed (wavespeed.ai). Генерация изображения выполняется моделью Nano Banana AI."
           }
         }
       }
@@ -352,13 +352,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You can withdraw consent by not using AI generation. For details on collection, use, and retention, see our Privacy Policy."
+            "value": "You can withdraw consent by not using AI generation. For details on collection, use, retention, and third-party sharing, see our Privacy Policy and Terms of Use."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Вы можете отказаться, не используя AI-генерацию. Подробности о сборе, использовании и хранении данных — в Политике конфиденциальности."
+            "value": "Вы можете отказаться, не используя AI-генерацию. Подробности о сборе, использовании, хранении и передаче третьим лицам — в Политике конфиденциальности и Условиях использования."
           }
         }
       }
@@ -376,6 +376,23 @@
           "stringUnit": {
             "state": "translated",
             "value": "Политика конфиденциальности"
+          }
+        }
+      }
+    },
+    "ai.consent.terms_link": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms of Use"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Условия использования"
           }
         }
       }

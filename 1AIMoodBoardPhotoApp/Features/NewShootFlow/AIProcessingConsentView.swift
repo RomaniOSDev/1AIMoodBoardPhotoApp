@@ -41,14 +41,25 @@ struct AIProcessingConsentView: View {
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    Button {
-                        openURL(AppLinks.privacyPolicy)
-                    } label: {
-                        Text(L10n.AIConsent.privacyLink)
-                            .font(.footnote.weight(.semibold))
-                            .underline()
+                    HStack(spacing: 20) {
+                        Button {
+                            openURL(AppLinks.privacyPolicy)
+                        } label: {
+                            Text(L10n.AIConsent.privacyLink)
+                                .font(.footnote.weight(.semibold))
+                                .underline()
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            openURL(AppLinks.termsOfUse)
+                        } label: {
+                            Text(L10n.AIConsent.termsLink)
+                                .font(.footnote.weight(.semibold))
+                                .underline()
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                     .padding(.top, 4)
                 }
                 .padding(.horizontal, 20)
