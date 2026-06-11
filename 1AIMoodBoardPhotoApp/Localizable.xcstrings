@@ -233,13 +233,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "To create your AI photo, we send your selfie, selected style, and any text prompt to WaveSpeed (wavespeed.ai), our AI platform provider. WaveSpeed processes your data using the Nano Banana image generation model. We do not send any data until you tap Agree & Continue."
+            "value": "To create your AI photo, we send your selfie, selected style, and any text prompt to WaveSpeed (wavespeed.ai), our third-party AI processing provider. We do not send any data until you tap Agree & Continue."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Для создания AI-фото мы передаём селфи, выбранный стиль и текстовый промпт в WaveSpeed (wavespeed.ai) — платформу AI-провайдера. WaveSpeed обрабатывает данные с помощью модели генерации изображений Nano Banana. Данные не отправляются, пока вы не нажмёте «Согласен и продолжить»."
+            "value": "Для создания AI-фото мы передаём селфи, выбранный стиль и текстовый промпт в WaveSpeed (wavespeed.ai) — стороннему провайдеру AI-обработки. Данные не отправляются, пока вы не нажмёте «Согласен и продолжить»."
           }
         }
       }
@@ -335,13 +335,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Recipient: WaveSpeed (wavespeed.ai). Image generation is performed using the Nano Banana AI model."
+            "value": "Recipient: WaveSpeed (wavespeed.ai). Image generation is performed on WaveSpeed's secure AI infrastructure."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Получатель: WaveSpeed (wavespeed.ai). Генерация изображения выполняется моделью Nano Banana AI."
+            "value": "Получатель: WaveSpeed (wavespeed.ai). Генерация изображения выполняется на защищённой AI-инфраструктуре WaveSpeed."
           }
         }
       }

@@ -20,7 +20,7 @@ enum VibePreset: String, CaseIterable, Identifiable, Hashable, Sendable {
 
     var id: String { rawValue }
 
-    /// Text fused into the nano-banana prompt (English).
+    /// Text fused into the image-generation prompt (English).
     var promptFragment: String {
         switch self {
         case .cleanGirl:

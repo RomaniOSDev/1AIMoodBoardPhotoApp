@@ -53,11 +53,11 @@ struct UploadBinaryResponse: Decodable {
     }
 }
 
-// MARK: - Nano-banana edit (POST /google/nano-banana/edit)
+// MARK: - Image edit (POST /google/nano-banana/edit)
 // Task id is parsed in `WaveSpeedSubmitParsing` from raw JSON (several possible shapes).
 
-/// Request body per WaveSpeed schema (nano-banana edit).
-struct NanoBananaEditBody: Encodable {
+/// Request body per WaveSpeed image-edit API schema.
+struct ImageEditRequestBody: Encodable {
     let enableBase64Output: Bool
     let enableSyncMode: Bool
     let images: [String]
@@ -66,8 +66,8 @@ struct NanoBananaEditBody: Encodable {
     /// Schema: 1:1, 3:2, …, 9:16, … App prompt asks for 9:16 vertical lifestyle shot.
     let aspectRatio: String?
 
-    static func shootRequest(imageURLs: [String], prompt: String) -> NanoBananaEditBody {
-        NanoBananaEditBody(
+    static func shootRequest(imageURLs: [String], prompt: String) -> ImageEditRequestBody {
+        ImageEditRequestBody(
             // Avoid CDN download instability on some networks: receive image bytes directly in API response.
             enableBase64Output: true,
             enableSyncMode: false,

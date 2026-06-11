@@ -99,8 +99,8 @@ actor AIService {
         case .mock:
             return SubmitEditOutcome(taskID: UUID().uuidString, resultPollURL: nil)
         case .live:
-            let body = NanoBananaEditBody.shootRequest(imageURLs: imageURLs, prompt: prompt)
-            let respData = try await http.postJSONData(url: Endpoints.nanoBananaEdit(), body: body)
+            let body = ImageEditRequestBody.shootRequest(imageURLs: imageURLs, prompt: prompt)
+            let respData = try await http.postJSONData(url: Endpoints.imageEdit(), body: body)
             let rawSnippet = String(data: respData.prefix(1500), encoding: .utf8) ?? ""
             print("[AIService] submitEdit raw: \(rawSnippet)")
 
