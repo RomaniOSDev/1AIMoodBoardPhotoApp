@@ -53,7 +53,7 @@ struct UploadBinaryResponse: Decodable {
     }
 }
 
-// MARK: - Image edit (POST /google/nano-banana/edit)
+// MARK: - WaveSpeed image edit request
 // Task id is parsed in `WaveSpeedSubmitParsing` from raw JSON (several possible shapes).
 
 /// Request body per WaveSpeed image-edit API schema.

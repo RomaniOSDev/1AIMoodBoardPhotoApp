@@ -1814,13 +1814,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Sync finished. For consumables (bananas), automatic restore is limited by Apple policy."
+            "value": "Sync finished. Your subscription status has been updated."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Синхронизация завершена. Для расходуемых товаров (бананы) автоматическое восстановление ограничено политикой Apple."
+            "value": "Синхронизация завершена. Статус подписки обновлён."
           }
         }
       }
@@ -2256,13 +2256,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Product is unavailable."
+            "value": "This subscription is not available right now. Try again or choose another plan."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Товар недоступен."
+            "value": "Эта подписка сейчас недоступна. Попробуйте снова или выберите другой план."
           }
         }
       }
@@ -2358,13 +2358,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "No products loaded. Check Scheme -> Run -> Options -> StoreKit Configuration."
+            "value": "Subscriptions are unavailable right now. Please try again later."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Товары не загружены. Проверьте Scheme → Run → Options → StoreKit Configuration."
+            "value": "Подписки сейчас недоступны. Попробуйте позже."
           }
         }
       }
@@ -2943,6 +2943,57 @@
           "stringUnit": {
             "state": "translated",
             "value": "Активная подписка для этого Apple ID не найдена."
+          }
+        }
+      }
+    },
+    "paywall.reload_products": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reload subscription options"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновить варианты подписки"
+          }
+        }
+      }
+    },
+    "paywall.products_mismatch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscription options could not be loaded. Check your connection and try again."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось загрузить варианты подписки. Проверьте соединение и попробуйте снова."
+          }
+        }
+      }
+    },
+    "paywall.products_partially_loaded": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some subscription options are temporarily unavailable."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Некоторые варианты подписки временно недоступны."
           }
         }
       }

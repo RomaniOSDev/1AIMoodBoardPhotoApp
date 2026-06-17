@@ -99,15 +99,6 @@ enum L10n {
         static var savedToast: String { tr("gallery.saved_toast") }
     }
 
-    enum Banana {
-        static var goPurchase: String { tr("banana.go_purchase") }
-        static var outMessage: String { tr("banana.out_message") }
-        static var outTitle: String { tr("banana.out_title") }
-        static var toolbarBuyA11y: String { tr("banana.toolbar.a11y") }
-        static var welcomeMessage: String { tr("banana.welcome_message") }
-        static var welcomeTitle: String { tr("banana.welcome_title") }
-    }
-
     enum Profile {
         static var activity: String { tr("profile.activity") }
         static var alertPurchase: String { tr("profile.alert_purchase") }
@@ -161,6 +152,9 @@ enum L10n {
         static var legalNote: String { tr("paywall.legal_note") }
         static var freeTrialExpired: String { tr("paywall.free_trial_expired") }
         static var restoreNoSubscription: String { tr("paywall.restore_no_subscription") }
+        static var reloadProducts: String { tr("paywall.reload_products") }
+        static var productsMismatch: String { tr("paywall.products_mismatch") }
+        static var productsPartiallyLoaded: String { tr("paywall.products_partially_loaded") }
 
         static func pricePerWeekFormat(_ price: String) -> String {
             String(format: tr("paywall.price_per_week_format"), locale: .current, price)
@@ -188,10 +182,6 @@ enum L10n {
 
     enum StoreKitConfig {
         static var noProductsLoaded: String { tr("storekit.no_products") }
-    }
-
-    enum AppStrings {
-        static var notEnoughBananas: String { tr("error.not_enough_bananas") }
     }
 
     enum Ai {

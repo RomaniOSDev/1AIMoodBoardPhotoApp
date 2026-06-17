@@ -62,9 +62,16 @@ final class StoreKitManager: ObservableObject {
     func loadProducts() async {
         do {
             subscriptionProducts = try await Product.products(for: Constants.SubscriptionProducts.all)
+            let loadedIDs = Set(subscriptionProducts.map(\.id))
+            let missing = Set(Constants.SubscriptionProducts.all).subtracting(loadedIDs)
             print("[StoreKit] loaded: \(subscriptionProducts.map(\.id))")
+            if !missing.isEmpty {
+                print("[StoreKit] missing product IDs: \(missing.sorted())")
+            }
             if subscriptionProducts.isEmpty {
                 loadErrorMessage = L10n.StoreKitConfig.noProductsLoaded
+            } else if !missing.isEmpty {
+                loadErrorMessage = L10n.Paywall.productsPartiallyLoaded
             } else {
                 loadErrorMessage = nil
             }
@@ -76,6 +83,17 @@ final class StoreKitManager: ObservableObject {
 
     func product(for plan: WeeklySubscriptionPlan) -> Product? {
         subscriptionProducts.first { $0.id == plan.productID }
+    }
+
+    func isProductAvailable(for plan: WeeklySubscriptionPlan) -> Bool {
+        product(for: plan) != nil
+    }
+
+    /// Prefers trial plan when loaded; otherwise weekly without trial.
+    func preferredAvailablePlan() -> WeeklySubscriptionPlan? {
+        if isProductAvailable(for: .trial) { return .trial }
+        if isProductAvailable(for: .noTrial) { return .noTrial }
+        return nil
     }
 
     func displayPrice(for plan: WeeklySubscriptionPlan) -> String {

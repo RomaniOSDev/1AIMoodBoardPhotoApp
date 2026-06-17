@@ -64,11 +64,11 @@ struct PaywallView: View {
                         .frame(height: 56)
                         .background(
                             RoundedRectangle(cornerRadius: 28, style: .continuous)
-                                .fill(PaywallAccent.brown)
+                                .fill(canPurchaseSelectedPlan ? PaywallAccent.brown : PaywallAccent.brown.opacity(0.45))
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(storeKit.purchaseInProgress)
+                .disabled(storeKit.purchaseInProgress || !canPurchaseSelectedPlan)
 
                 footerLinks
             }
@@ -91,6 +91,10 @@ struct PaywallView: View {
         }
         .task {
             await storeKit.loadProducts()
+            syncSelectedPlan()
+        }
+        .onChange(of: storeKit.subscriptionProducts.map(\.id)) { _, _ in
+            syncSelectedPlan()
         }
         .onChange(of: storeKit.isSubscribed) { _, subscribed in
             if subscribed {
@@ -132,21 +136,75 @@ struct PaywallView: View {
 
     private var planCards: some View {
         VStack(spacing: 14) {
-            planCard(
-                plan: .trial,
-                badge: L10n.Paywall.freeTrialBadge,
-                title: L10n.Paywall.trialTitle,
-                priceLine: trialPriceLine,
-                subtitle: L10n.Paywall.trialSubtitle
-            )
+            if let loadError = storeKit.loadErrorMessage, storeKit.subscriptionProducts.isEmpty {
+                productsStatusBanner(message: loadError)
+            } else if storeKit.loadErrorMessage != nil {
+                productsStatusBanner(message: storeKit.loadErrorMessage!)
+            }
 
-            planCard(
-                plan: .noTrial,
-                badge: nil,
-                title: L10n.Paywall.weekTitle,
-                priceLine: weekPriceLine,
-                subtitle: L10n.Paywall.weekSubtitle
-            )
+            if storeKit.isProductAvailable(for: .trial) {
+                planCard(
+                    plan: .trial,
+                    badge: L10n.Paywall.freeTrialBadge,
+                    title: L10n.Paywall.trialTitle,
+                    priceLine: trialPriceLine,
+                    subtitle: L10n.Paywall.trialSubtitle
+                )
+            }
+
+            if storeKit.isProductAvailable(for: .noTrial) {
+                planCard(
+                    plan: .noTrial,
+                    badge: nil,
+                    title: L10n.Paywall.weekTitle,
+                    priceLine: weekPriceLine,
+                    subtitle: L10n.Paywall.weekSubtitle
+                )
+            }
+
+            if !storeKit.subscriptionProducts.isEmpty,
+               storeKit.preferredAvailablePlan() == nil {
+                productsStatusBanner(message: L10n.Paywall.productsMismatch)
+            }
+        }
+    }
+
+    private var canPurchaseSelectedPlan: Bool {
+        storeKit.isProductAvailable(for: selectedPlan)
+    }
+
+    private func productsStatusBanner(message: String) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(message)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Button {
+                Task {
+                    await storeKit.loadProducts()
+                    syncSelectedPlan()
+                }
+            } label: {
+                Text(L10n.Paywall.reloadProducts)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(PaywallAccent.brown)
+            }
+            .buttonStyle(.plain)
+            .disabled(storeKit.purchaseInProgress)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(Color(.secondarySystemBackground))
+        )
+    }
+
+    private func syncSelectedPlan() {
+        guard let plan = storeKit.preferredAvailablePlan() else { return }
+        if !storeKit.isProductAvailable(for: selectedPlan) {
+            selectedPlan = plan
         }
     }
 
@@ -293,6 +351,12 @@ struct PaywallView: View {
     }
 
     private func purchaseSelected() async {
+        guard storeKit.isProductAvailable(for: selectedPlan) else {
+            errorMessage = L10n.Store.errorUnavailable
+            showError = true
+            return
+        }
+
         do {
             try await storeKit.purchase(plan: selectedPlan)
             if storeKit.isSubscribed {
