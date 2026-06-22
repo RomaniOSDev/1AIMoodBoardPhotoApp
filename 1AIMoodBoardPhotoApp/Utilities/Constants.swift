@@ -8,7 +8,7 @@ import CoreGraphics
 
 enum Constants {
     /// Replace with your WaveSpeed API key (prefer env/build setting in production).
-    static let wavespeedAPIKey = "7ccf6b1f435db7e53d022eb21e947bd45062573393457ff5c47d8e3da310dcaf"
+    static let wavespeedAPIKey = "wsk_live_RfQQm5EOZGc7Tlxo0gBTbRrudB6-uOaoga9_GkcZrU4"
 
     static let freeTrialDurationDays = 3
 
