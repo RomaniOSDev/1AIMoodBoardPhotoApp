@@ -153,8 +153,6 @@ enum L10n {
         static var freeTrialExpired: String { tr("paywall.free_trial_expired") }
         static var restoreNoSubscription: String { tr("paywall.restore_no_subscription") }
         static var reloadProducts: String { tr("paywall.reload_products") }
-        static var productsMismatch: String { tr("paywall.products_mismatch") }
-        static var productsPartiallyLoaded: String { tr("paywall.products_partially_loaded") }
 
         static func pricePerWeekFormat(_ price: String) -> String {
             String(format: tr("paywall.price_per_week_format"), locale: .current, price)

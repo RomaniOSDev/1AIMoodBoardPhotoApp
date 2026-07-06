@@ -27,11 +27,11 @@ enum Constants {
     static let aiUseLiveNetwork = true
 
     enum SubscriptionProducts {
-        /// Weekly with 3-day free trial (intro offer configured in App Store Connect / StoreKit file).
-        static let weeklyWithTrial = "weekly_premium_trial"
-        /// Weekly billed immediately, no trial.
-        static let weeklyNoTrial = "weekly_premium"
-        static let all = [weeklyWithTrial, weeklyNoTrial]
+        /// Single auto-renewable weekly subscription. The 3-day free trial is configured
+        /// as its introductory offer in App Store Connect / StoreKit configuration file —
+        /// there is no separate product ID for the trial.
+        static let weekly = "weekly_premium"
+        static let all = [weekly]
         static let groupID = "premium_weekly"
     }
 

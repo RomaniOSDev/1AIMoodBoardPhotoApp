@@ -24,24 +24,11 @@ enum StoreError: LocalizedError {
     }
 }
 
-enum WeeklySubscriptionPlan: String, CaseIterable, Identifiable, Sendable {
-    case trial
-    case noTrial
-
-    var id: String { productID }
-
-    var productID: String {
-        switch self {
-        case .trial: return Constants.SubscriptionProducts.weeklyWithTrial
-        case .noTrial: return Constants.SubscriptionProducts.weeklyNoTrial
-        }
-    }
-}
-
 @MainActor
 final class StoreKitManager: ObservableObject {
     @Published private(set) var isSubscribed = false
-    @Published private(set) var subscriptionProducts: [Product] = []
+    @Published private(set) var product: Product?
+    @Published private(set) var isEligibleForIntroOffer = true
     @Published private(set) var purchaseInProgress = false
     @Published private(set) var loadErrorMessage: String?
 
@@ -61,19 +48,16 @@ final class StoreKitManager: ObservableObject {
 
     func loadProducts() async {
         do {
-            subscriptionProducts = try await Product.products(for: Constants.SubscriptionProducts.all)
-            let loadedIDs = Set(subscriptionProducts.map(\.id))
-            let missing = Set(Constants.SubscriptionProducts.all).subtracting(loadedIDs)
-            print("[StoreKit] loaded: \(subscriptionProducts.map(\.id))")
-            if !missing.isEmpty {
-                print("[StoreKit] missing product IDs: \(missing.sorted())")
-            }
-            if subscriptionProducts.isEmpty {
-                loadErrorMessage = L10n.StoreKitConfig.noProductsLoaded
-            } else if !missing.isEmpty {
-                loadErrorMessage = L10n.Paywall.productsPartiallyLoaded
-            } else {
+            let products = try await Product.products(for: Constants.SubscriptionProducts.all)
+            product = products.first { $0.id == Constants.SubscriptionProducts.weekly }
+            print("[StoreKit] loaded: \(products.map(\.id))")
+
+            if let product {
                 loadErrorMessage = nil
+                await refreshIntroOfferEligibility(for: product)
+            } else {
+                loadErrorMessage = L10n.StoreKitConfig.noProductsLoaded
+                print("[StoreKit] missing product ID: \(Constants.SubscriptionProducts.weekly)")
             }
         } catch {
             loadErrorMessage = error.localizedDescription
@@ -81,30 +65,25 @@ final class StoreKitManager: ObservableObject {
         }
     }
 
-    func product(for plan: WeeklySubscriptionPlan) -> Product? {
-        subscriptionProducts.first { $0.id == plan.productID }
+    private func refreshIntroOfferEligibility(for product: Product) async {
+        guard let subscription = product.subscription else {
+            isEligibleForIntroOffer = false
+            return
+        }
+        isEligibleForIntroOffer = await subscription.isEligibleForIntroOffer
     }
 
-    func isProductAvailable(for plan: WeeklySubscriptionPlan) -> Bool {
-        product(for: plan) != nil
+    var isProductAvailable: Bool { product != nil }
+
+    var displayPrice: String {
+        product?.displayPrice ?? "—"
     }
 
-    /// Prefers trial plan when loaded; otherwise weekly without trial.
-    func preferredAvailablePlan() -> WeeklySubscriptionPlan? {
-        if isProductAvailable(for: .trial) { return .trial }
-        if isProductAvailable(for: .noTrial) { return .noTrial }
-        return nil
-    }
-
-    func displayPrice(for plan: WeeklySubscriptionPlan) -> String {
-        product(for: plan)?.displayPrice ?? "—"
-    }
-
-    func purchase(plan: WeeklySubscriptionPlan) async throws {
-        if subscriptionProducts.isEmpty {
+    func purchase() async throws {
+        if product == nil {
             await loadProducts()
         }
-        guard let product = product(for: plan) else {
+        guard let product else {
             throw StoreError.productUnavailable
         }
 
@@ -144,7 +123,7 @@ final class StoreKitManager: ObservableObject {
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else { continue }
             guard transaction.productType == .autoRenewable else { continue }
-            guard Constants.SubscriptionProducts.all.contains(transaction.productID) else { continue }
+            guard transaction.productID == Constants.SubscriptionProducts.weekly else { continue }
             if transaction.revocationDate == nil {
                 active = true
                 break

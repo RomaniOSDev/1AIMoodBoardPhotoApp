@@ -16,9 +16,9 @@ final class ProfileViewModel: ObservableObject {
     @Published var showResetAlert = false
     @Published var resetMessage = ""
 
-    func purchase(plan: WeeklySubscriptionPlan, dependencies: AppDependencies) async {
+    func purchase(dependencies: AppDependencies) async {
         do {
-            try await dependencies.storeKitManager.purchase(plan: plan)
+            try await dependencies.storeKitManager.purchase()
         } catch let error as StoreError {
             if case .userCancelled = error { return }
             purchaseErrorMessage = error.localizedDescription ?? ""

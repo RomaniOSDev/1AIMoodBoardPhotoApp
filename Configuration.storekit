@@ -48,7 +48,7 @@
           "displayPrice" : "5.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "WEEKLY_TRIAL001",
+          "internalID" : "WEEKLY_STD001",
           "introductoryOffer" : {
             "internalID" : "WEEKLY_TRIAL_INTRO",
             "numberOfPeriods" : 1,
@@ -58,34 +58,6 @@
           "localizations" : [
             {
               "description" : "Weekly access with a 3-day free trial.",
-              "displayName" : "Weekly Premium Trial",
-              "locale" : "en_US"
-            }
-          ],
-          "productID" : "weekly_premium_trial",
-          "recurringSubscriptionPeriod" : "P1W",
-          "referenceName" : "Weekly Premium Trial",
-          "subscriptionGroupID" : "premium_weekly",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
-        },
-        {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "5.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "WEEKLY_STD001",
-          "introductoryOffer" : null,
-          "localizations" : [
-            {
-              "description" : "Weekly access, billed immediately.",
               "displayName" : "Weekly Premium",
               "locale" : "en_US"
             }

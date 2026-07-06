@@ -2964,40 +2964,6 @@
         }
       }
     },
-    "paywall.products_mismatch": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscription options could not be loaded. Check your connection and try again."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Не удалось загрузить варианты подписки. Проверьте соединение и попробуйте снова."
-          }
-        }
-      }
-    },
-    "paywall.products_partially_loaded": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Some subscription options are temporarily unavailable."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Некоторые варианты подписки временно недоступны."
-          }
-        }
-      }
-    },
     "subscription.pro_badge": {
       "extractionState": "manual",
       "localizations": {
