@@ -43,7 +43,6 @@ struct PaywallView: View {
                     previewCollage
                     headline
                     planCards
-                    limitedLink
                     legalNote
                 }
                 .padding(.horizontal, 20)
@@ -68,6 +67,12 @@ struct PaywallView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(storeKit.purchaseInProgress || !canPurchaseSelectedPlan)
+
+                if storeKit.isProductAvailable, storeKit.isEligibleForIntroOffer {
+                    Text(L10n.Paywall.trialDisclosure)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(PaywallAccent.brown)
+                }
 
                 footerLinks
             }
@@ -136,14 +141,15 @@ struct PaywallView: View {
             }
 
             if storeKit.isProductAvailable {
-                planCard(
-                    badge: storeKit.isEligibleForIntroOffer ? L10n.Paywall.freeTrialBadge : nil,
-                    title: storeKit.isEligibleForIntroOffer ? L10n.Paywall.trialTitle : L10n.Paywall.weekTitle,
-                    priceLine: weekPriceLine,
-                    subtitle: storeKit.isEligibleForIntroOffer ? L10n.Paywall.trialSubtitle : L10n.Paywall.weekSubtitle
-                )
+                planCard(priceLine: weekPriceLine, subtitle: cardSubtitle)
             }
         }
+    }
+
+    private var cardSubtitle: String {
+        storeKit.isEligibleForIntroOffer
+            ? L10n.Paywall.trialPriceSubtitle(storeKit.displayPrice)
+            : L10n.Paywall.weekPriceSubtitle(storeKit.displayPrice)
     }
 
     private var canPurchaseSelectedPlan: Bool {
@@ -175,26 +181,6 @@ struct PaywallView: View {
         )
     }
 
-    @ViewBuilder
-    private var limitedLink: some View {
-        let trial = dependencies.freeTrialAccess
-        if trial.hasUsedTrial && !trial.isActive {
-            EmptyView()
-        } else {
-            Button {
-                trial.activate()
-                onLimitedAccess()
-                dismiss()
-            } label: {
-                Text(L10n.Paywall.limitedVersion)
-                    .font(.subheadline.weight(.medium))
-                    .foregroundStyle(.secondary)
-            }
-            .buttonStyle(.plain)
-            .padding(.top, 4)
-        }
-    }
-
     private var legalNote: some View {
         Text(L10n.Paywall.legalNote)
             .font(.caption2)
@@ -213,50 +199,28 @@ struct PaywallView: View {
     }
 
     private var primaryButtonTitle: String {
-        storeKit.isEligibleForIntroOffer ? L10n.Paywall.startTrialCTA : L10n.Paywall.subscribeCTA
+        L10n.Paywall.subscribePriceCTA(storeKit.displayPrice)
     }
 
     private var weekPriceLine: String {
-        L10n.Paywall.pricePerWeekFormat(storeKit.displayPrice)
+        storeKit.displayPrice
     }
 
     @ViewBuilder
-    private func planCard(
-        badge: String?,
-        title: String,
-        priceLine: String,
-        subtitle: String
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let badge {
-                Text(badge)
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule().fill(PaywallAccent.brown)
-                    )
-                    .padding(.bottom, 10)
+    private func planCard(priceLine: String, subtitle: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                Text(priceLine)
+                    .font(AppFont.custom(26, weight: .heavy))
+                    .foregroundStyle(.primary)
+                Text(L10n.Paywall.perWeekSuffix)
+                    .font(AppFont.custom(15, weight: .medium))
+                    .foregroundStyle(.secondary)
             }
-
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                    Text(priceLine)
-                        .font(AppFont.custom(22, weight: .heavy))
-                        .foregroundStyle(.primary)
-                    Text(subtitle)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.title2)
-                    .foregroundStyle(PaywallAccent.brown)
-            }
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(16)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -266,7 +230,7 @@ struct PaywallView: View {
         )
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(PaywallAccent.brown, lineWidth: 2)
+                .stroke(PaywallAccent.brown, lineWidth: 1.5)
         )
     }
 

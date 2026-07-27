@@ -2692,155 +2692,87 @@
         }
       }
     },
-    "paywall.free_trial_badge": {
+    "paywall.trial_price_subtitle_format": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "FREE TRIAL"
+            "value": "3-day free trial, then %@/week. Cancel anytime."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "БЕСПЛАТНО"
+            "value": "3 дня бесплатно, затем %@/нед. Отмена в любой момент."
           }
         }
       }
     },
-    "paywall.trial_title": {
+    "paywall.week_price_subtitle_format": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "3 days free trial"
+            "value": "%@/week. Cancel anytime."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "3 дня бесплатно"
+            "value": "%@/нед. Отмена в любой момент."
           }
         }
       }
     },
-    "paywall.trial_subtitle": {
+    "paywall.subscribe_price_cta_format": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Billed after free trial"
+            "value": "Subscribe — %@/week"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Оплата после пробного периода"
+            "value": "Подписаться — %@/нед."
           }
         }
       }
     },
-    "paywall.week_title": {
+    "paywall.trial_disclosure": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Week"
+            "value": "3 days free, then billed weekly"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Неделя"
+            "value": "3 дня бесплатно, затем еженедельное списание"
           }
         }
       }
     },
-    "paywall.week_subtitle": {
+    "paywall.per_week_suffix": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Without a trial version"
+            "value": "/week"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Без пробного периода"
-          }
-        }
-      }
-    },
-    "paywall.price_per_week_format": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ /week"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ /нед."
-          }
-        }
-      }
-    },
-    "paywall.limited_version": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Continue with 3-day free access (unlimited)"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 дня бесплатно без ограничений"
-          }
-        }
-      }
-    },
-    "paywall.start_trial_cta": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start 3 Days Free Trial"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Начать 3 дня бесплатно"
-          }
-        }
-      }
-    },
-    "paywall.subscribe_cta": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscribe Weekly"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подписаться на неделю"
+            "value": "/нед."
           }
         }
       }

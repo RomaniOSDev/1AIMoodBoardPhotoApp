@@ -138,14 +138,6 @@ enum L10n {
 
     enum Paywall {
         static var headline: String { tr("paywall.headline") }
-        static var freeTrialBadge: String { tr("paywall.free_trial_badge") }
-        static var trialTitle: String { tr("paywall.trial_title") }
-        static var trialSubtitle: String { tr("paywall.trial_subtitle") }
-        static var weekTitle: String { tr("paywall.week_title") }
-        static var weekSubtitle: String { tr("paywall.week_subtitle") }
-        static var limitedVersion: String { tr("paywall.limited_version") }
-        static var startTrialCTA: String { tr("paywall.start_trial_cta") }
-        static var subscribeCTA: String { tr("paywall.subscribe_cta") }
         static var restore: String { tr("paywall.restore") }
         static var terms: String { tr("paywall.terms") }
         static var privacy: String { tr("paywall.privacy") }
@@ -153,9 +145,19 @@ enum L10n {
         static var freeTrialExpired: String { tr("paywall.free_trial_expired") }
         static var restoreNoSubscription: String { tr("paywall.restore_no_subscription") }
         static var reloadProducts: String { tr("paywall.reload_products") }
+        static var trialDisclosure: String { tr("paywall.trial_disclosure") }
+        static var perWeekSuffix: String { tr("paywall.per_week_suffix") }
 
-        static func pricePerWeekFormat(_ price: String) -> String {
-            String(format: tr("paywall.price_per_week_format"), locale: .current, price)
+        static func trialPriceSubtitle(_ price: String) -> String {
+            String(format: tr("paywall.trial_price_subtitle_format"), locale: .current, price)
+        }
+
+        static func weekPriceSubtitle(_ price: String) -> String {
+            String(format: tr("paywall.week_price_subtitle_format"), locale: .current, price)
+        }
+
+        static func subscribePriceCTA(_ price: String) -> String {
+            String(format: tr("paywall.subscribe_price_cta_format"), locale: .current, price)
         }
     }
 
