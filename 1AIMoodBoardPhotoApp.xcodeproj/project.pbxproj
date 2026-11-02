@@ -693,6 +693,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hggf Pro - AI Photo Generator";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
@@ -735,6 +736,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Hggf Pro - AI Photo Generator";
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
