@@ -68,8 +68,11 @@ final class ProcessingViewModel: ObservableObject {
         defer { currentTask = nil }
         isRunning = true
 
+        let started = Date()
+        print("[ProcessingViewModel] pipeline START remainingCredits=\(dependencies.remainingGenerations) subscribed=\(dependencies.storeKitManager.isSubscribed) intro=\(dependencies.storeKitManager.isInIntroOfferPeriod)")
         do {
             try dependencies.reserveGeneration()
+            print("[ProcessingViewModel] reserveGeneration OK")
 
             let url = try await dependencies.aiService.generateShoot(
                 selfieImages: coordinator.selfieImages,
@@ -80,6 +83,7 @@ final class ProcessingViewModel: ObservableObject {
                         guard let self else { return }
                         self.progress = min(max(update.value, 0), 1)
                         self.message = update.label
+                        print("[ProcessingViewModel] progress=\(String(format: "%.2f", update.value)) label=\(update.label)")
                     }
                 }
             )
@@ -91,24 +95,39 @@ final class ProcessingViewModel: ObservableObject {
             message = L10n.Progress.done
             completedSuccessfully = true
             isRunning = false
-            print("[ProcessingViewModel] success path=\(url.path)")
+            print("[ProcessingViewModel] SUCCESS in \(String(format: "%.2f", Date().timeIntervalSince(started)))s path=\(url.path)")
             try? await Task.sleep(nanoseconds: 350_000_000)
             onSuccess()
         } catch is CancellationError {
             isRunning = false
-            print("[ProcessingViewModel] cancelled")
-        } catch let error as FreeTrialError {
+            print("[ProcessingViewModel] CANCELLED after \(String(format: "%.2f", Date().timeIntervalSince(started)))s")
+        } catch let error as URLError where error.code == .cancelled {
             isRunning = false
-            present(error: error)
-            print("[ProcessingViewModel] free trial error: \(error)")
+            print("[ProcessingViewModel] CANCELLED(-999) after \(String(format: "%.2f", Date().timeIntervalSince(started)))s")
         } catch let error as AIError {
+            if case .network(let underlying) = error,
+               (underlying as? URLError)?.code == .cancelled || Task.isCancelled {
+                isRunning = false
+                print("[ProcessingViewModel] CANCELLED(ai-network) after \(String(format: "%.2f", Date().timeIntervalSince(started)))s")
+                return
+            }
             isRunning = false
             present(aiError: error)
-            print("[ProcessingViewModel] AI error: \(error)")
+            print("[ProcessingViewModel] AI error after \(String(format: "%.2f", Date().timeIntervalSince(started)))s: \(error)")
+        } catch let error as GenerationCreditError {
+            isRunning = false
+            present(error: error)
+            print("[ProcessingViewModel] CREDITS error after \(String(format: "%.2f", Date().timeIntervalSince(started)))s: \(error)")
         } catch {
+            let ns = error as NSError
+            if ns.domain == NSURLErrorDomain && ns.code == NSURLErrorCancelled {
+                isRunning = false
+                print("[ProcessingViewModel] CANCELLED(ns) after \(String(format: "%.2f", Date().timeIntervalSince(started)))s")
+                return
+            }
             isRunning = false
             present(message: error.localizedDescription)
-            print("[ProcessingViewModel] error: \(error)")
+            print("[ProcessingViewModel] error after \(String(format: "%.2f", Date().timeIntervalSince(started)))s domain=\(ns.domain) code=\(ns.code) \(error)")
         }
     }
 

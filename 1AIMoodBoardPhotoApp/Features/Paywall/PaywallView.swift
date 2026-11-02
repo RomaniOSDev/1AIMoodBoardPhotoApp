@@ -17,20 +17,18 @@ struct PaywallView: View {
 
     @ObservedObject private var storeKit: StoreKitManager
 
+    @State private var selectedKind: StoreProductKind?
     @State private var showError = false
     @State private var errorMessage = ""
 
     var onSubscribed: () -> Void
-    var onLimitedAccess: () -> Void
 
     init(
         storeKit: StoreKitManager,
-        onSubscribed: @escaping () -> Void = {},
-        onLimitedAccess: @escaping () -> Void = {}
+        onSubscribed: @escaping () -> Void = {}
     ) {
         self.storeKit = storeKit
         self.onSubscribed = onSubscribed
-        self.onLimitedAccess = onLimitedAccess
     }
 
     var body: some View {
@@ -47,7 +45,7 @@ struct PaywallView: View {
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
-                .padding(.bottom, 120)
+                .padding(.bottom, 140)
             }
         }
         .safeAreaInset(edge: .bottom) {
@@ -62,16 +60,24 @@ struct PaywallView: View {
                         .frame(height: 56)
                         .background(
                             RoundedRectangle(cornerRadius: 28, style: .continuous)
-                                .fill(canPurchaseSelectedPlan ? PaywallAccent.brown : PaywallAccent.brown.opacity(0.45))
+                                .fill(canPurchase ? PaywallAccent.brown : PaywallAccent.brown.opacity(0.45))
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(storeKit.purchaseInProgress || !canPurchaseSelectedPlan)
+                .disabled(storeKit.purchaseInProgress || !canPurchase)
 
-                if storeKit.isProductAvailable, storeKit.isEligibleForIntroOffer {
-                    Text(L10n.Paywall.trialDisclosure)
+                if let selectedKind, selectedKind == .weeklyTrial {
+                    Text(L10n.Paywall.trialIncludesOneGeneration)
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(PaywallAccent.brown)
+                        .multilineTextAlignment(.center)
+                }
+
+                if showWaitHint {
+                    Text(L10n.Paywall.waitTrialEndsHint)
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
                 }
 
                 footerLinks
@@ -95,18 +101,101 @@ struct PaywallView: View {
         }
         .task {
             await storeKit.loadProducts()
+            syncSelection()
         }
-        .onChange(of: storeKit.isSubscribed) { _, subscribed in
-            if subscribed {
-                onSubscribed()
-                dismiss()
+        .onChange(of: storeKit.productsByID.keys.description) { _, _ in
+            syncSelection()
+        }
+        .onChange(of: storeKit.isSubscribed) { _, _ in
+            syncSelection()
+        }
+        .onChange(of: storeKit.isInIntroOfferPeriod) { _, _ in
+            syncSelection()
+        }
+        .onChange(of: dependencies.canGeneratePhoto) { _, canGenerate in
+            guard canGenerate else { return }
+            // Stay open during intro with 0 trial credits so user can pick pay-now / pack.
+            if storeKit.isInIntroOfferPeriod,
+               dependencies.generationCredits.subscriptionCreditsRemaining(
+                isSubscribed: true,
+                isInIntroOffer: true
+               ) == 0,
+               dependencies.generationCredits.consumableBalance == 0 {
+                return
+            }
+            onSubscribed()
+            dismiss()
+        }
+    }
+
+    private var availableKinds: [StoreProductKind] {
+        var kinds: [StoreProductKind] = []
+
+        if storeKit.isSubscribed && storeKit.isInIntroOfferPeriod {
+            // Trial active / exhausted: allow upgrade to paid + pack.
+            if storeKit.isProductAvailable(.weeklyNow) { kinds.append(.weeklyNow) }
+            if storeKit.isProductAvailable(.generations5) { kinds.append(.generations5) }
+        } else if storeKit.isSubscribed {
+            // Paid period, out of weekly credits → pack only.
+            if storeKit.isProductAvailable(.generations5) { kinds.append(.generations5) }
+        } else {
+            if storeKit.isEligibleForIntroOffer, storeKit.isProductAvailable(.weeklyTrial) {
+                kinds.append(.weeklyTrial)
+            }
+            if storeKit.isProductAvailable(.weeklyNow) {
+                kinds.append(.weeklyNow)
+            }
+            if storeKit.isProductAvailable(.generations5) {
+                kinds.append(.generations5)
             }
         }
+
+        return kinds
+    }
+
+    private var canPurchase: Bool {
+        guard let selectedKind else { return false }
+        return storeKit.isProductAvailable(selectedKind)
+    }
+
+    private var showWaitHint: Bool {
+        storeKit.isSubscribed && storeKit.isInIntroOfferPeriod && !dependencies.canGeneratePhoto
+    }
+
+    private var primaryButtonTitle: String {
+        guard let selectedKind else { return L10n.Paywall.subscribeNowCTA("—") }
+        switch selectedKind {
+        case .weeklyTrial:
+            return L10n.Paywall.startTrialCTA(storeKit.displayPrice(for: .weeklyTrial))
+        case .weeklyNow:
+            return L10n.Paywall.subscribeNowCTA(storeKit.displayPrice(for: .weeklyNow))
+        case .generations5:
+            return L10n.Paywall.buyPackCTA(storeKit.displayPrice(for: .generations5))
+        }
+    }
+
+    private func syncSelection() {
+        let kinds = availableKinds
+        if let selectedKind, kinds.contains(selectedKind) { return }
+        selectedKind = kinds.first
     }
 
     private var headerRow: some View {
         HStack {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(PaywallAccent.brown)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(PaywallAccent.brownLight))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Common.close)
+
             Spacer()
+
             Button(L10n.Paywall.restore) {
                 Task { await restore() }
             }
@@ -136,24 +225,81 @@ struct PaywallView: View {
 
     private var planCards: some View {
         VStack(spacing: 14) {
-            if let loadError = storeKit.loadErrorMessage {
+            if let loadError = storeKit.loadErrorMessage, availableKinds.isEmpty {
                 productsStatusBanner(message: loadError)
             }
 
-            if storeKit.isProductAvailable {
-                planCard(priceLine: weekPriceLine, subtitle: cardSubtitle)
+            ForEach(availableKinds) { kind in
+                selectableCard(for: kind)
             }
         }
     }
 
-    private var cardSubtitle: String {
-        storeKit.isEligibleForIntroOffer
-            ? L10n.Paywall.trialPriceSubtitle(storeKit.displayPrice)
-            : L10n.Paywall.weekPriceSubtitle(storeKit.displayPrice)
+    @ViewBuilder
+    private func selectableCard(for kind: StoreProductKind) -> some View {
+        let isSelected = selectedKind == kind
+        Button {
+            selectedKind = kind
+        } label: {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(title(for: kind))
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Text(priceLine(for: kind))
+                        .font(AppFont.custom(22, weight: .heavy))
+                        .foregroundStyle(.primary)
+                    Text(subtitle(for: kind))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundStyle(isSelected ? PaywallAccent.brown : PaywallAccent.cardStroke)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(isSelected ? PaywallAccent.brownLight : Color(.systemBackground))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(isSelected ? PaywallAccent.brown : PaywallAccent.cardStroke, lineWidth: isSelected ? 2 : 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 
-    private var canPurchaseSelectedPlan: Bool {
-        storeKit.isProductAvailable
+    private func title(for kind: StoreProductKind) -> String {
+        switch kind {
+        case .weeklyTrial: return L10n.Paywall.trialPlanTitle
+        case .weeklyNow: return L10n.Paywall.paidPlanTitle
+        case .generations5: return L10n.Paywall.packTitle
+        }
+    }
+
+    private func priceLine(for kind: StoreProductKind) -> String {
+        let price = storeKit.displayPrice(for: kind)
+        switch kind {
+        case .weeklyTrial, .weeklyNow:
+            return "\(price)\(L10n.Paywall.perWeekSuffix)"
+        case .generations5:
+            return price
+        }
+    }
+
+    private func subtitle(for kind: StoreProductKind) -> String {
+        switch kind {
+        case .weeklyTrial:
+            return L10n.Paywall.planSubtitle(storeKit.displayPrice(for: .weeklyTrial))
+        case .weeklyNow:
+            return L10n.Paywall.paidPlanSubtitle(storeKit.displayPrice(for: .weeklyNow))
+        case .generations5:
+            return L10n.Paywall.packSubtitle
+        }
     }
 
     private func productsStatusBanner(message: String) -> some View {
@@ -164,7 +310,10 @@ struct PaywallView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
-                Task { await storeKit.loadProducts() }
+                Task {
+                    await storeKit.loadProducts()
+                    syncSelection()
+                }
             } label: {
                 Text(L10n.Paywall.reloadProducts)
                     .font(.subheadline.weight(.semibold))
@@ -196,42 +345,6 @@ struct PaywallView: View {
             linkButton(L10n.Paywall.privacy) { openURL(AppLinks.privacyPolicy) }
         }
         .font(.caption)
-    }
-
-    private var primaryButtonTitle: String {
-        L10n.Paywall.subscribePriceCTA(storeKit.displayPrice)
-    }
-
-    private var weekPriceLine: String {
-        storeKit.displayPrice
-    }
-
-    @ViewBuilder
-    private func planCard(priceLine: String, subtitle: String) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 3) {
-                Text(priceLine)
-                    .font(AppFont.custom(26, weight: .heavy))
-                    .foregroundStyle(.primary)
-                Text(L10n.Paywall.perWeekSuffix)
-                    .font(AppFont.custom(15, weight: .medium))
-                    .foregroundStyle(.secondary)
-            }
-            Text(subtitle)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(PaywallAccent.brownLight)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(PaywallAccent.brown, lineWidth: 1.5)
-        )
     }
 
     @ViewBuilder
@@ -270,17 +383,34 @@ struct PaywallView: View {
     }
 
     private func purchaseSelected() async {
-        guard storeKit.isProductAvailable else {
+        guard let kind = selectedKind else { return }
+        guard storeKit.isProductAvailable(kind) else {
             errorMessage = L10n.Store.errorUnavailable
             showError = true
             return
         }
 
         do {
-            try await storeKit.purchase()
-            if storeKit.isSubscribed {
+            try await storeKit.purchase(kind)
+            syncSelection()
+
+            // After upgrade out of intro, user should have weekly credits.
+            if kind == .weeklyNow, storeKit.isSubscribed, !storeKit.isInIntroOfferPeriod {
                 onSubscribed()
                 dismiss()
+                return
+            }
+
+            if kind == .generations5, dependencies.generationCredits.consumableBalance > 0 {
+                onSubscribed()
+                dismiss()
+                return
+            }
+
+            if kind == .weeklyTrial, storeKit.isSubscribed {
+                onSubscribed()
+                dismiss()
+                return
             }
         } catch let error as StoreError {
             if case .userCancelled = error { return }
@@ -295,7 +425,8 @@ struct PaywallView: View {
     private func restore() async {
         do {
             try await storeKit.restorePurchases()
-            if storeKit.isSubscribed {
+            syncSelection()
+            if storeKit.isSubscribed || dependencies.canGeneratePhoto {
                 onSubscribed()
                 dismiss()
             } else {

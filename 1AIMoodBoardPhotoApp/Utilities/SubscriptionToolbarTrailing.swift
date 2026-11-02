@@ -5,7 +5,7 @@
 
 import SwiftUI
 
-/// Top bar status: PRO badge or free generations remaining.
+/// Top bar status: PRO badge or remaining generations.
 struct SubscriptionToolbarTrailing: View {
     @EnvironmentObject private var dependencies: AppDependencies
 
@@ -14,20 +14,25 @@ struct SubscriptionToolbarTrailing: View {
     var body: some View {
         Button(action: onUpgrade) {
             if dependencies.storeKitManager.isSubscribed {
-                Text(L10n.Subscription.proBadge)
-                    .font(.caption.weight(.bold))
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule().fill(Color.pinkApp)
-                    )
-            } else if dependencies.freeTrialAccess.isActive {
+                HStack(spacing: 6) {
+                    Text(L10n.Subscription.proBadge)
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(.white)
+                    Text(L10n.Subscription.remainingFormat(dependencies.remainingGenerations))
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.9))
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule().fill(Color.pinkApp)
+                )
+            } else if dependencies.generationCredits.consumableBalance > 0 {
                 HStack(spacing: 4) {
-                    Text(L10n.Subscription.freeTrialDaysFormat(dependencies.freeTrialAccess.daysRemaining))
+                    Text(L10n.Subscription.remainingFormat(dependencies.remainingGenerations))
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.primary)
-                    Image(systemName: "crown.fill")
+                    Image(systemName: "sparkles")
                         .font(.caption)
                         .foregroundStyle(Color.pinkApp)
                 }

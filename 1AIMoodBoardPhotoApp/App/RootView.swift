@@ -75,10 +75,6 @@ struct RootView: View {
                 storeKit: dependencies.storeKitManager,
                 onSubscribed: {
                     showPaywall = false
-                },
-                onLimitedAccess: {
-                    dependencies.freeTrialAccess.activate()
-                    showPaywall = false
                 }
             )
             .environmentObject(dependencies)
@@ -87,7 +83,6 @@ struct RootView: View {
 
     private func presentPaywallIfNeeded() {
         guard !dependencies.storeKitManager.isSubscribed else { return }
-        guard !dependencies.freeTrialAccess.isActive else { return }
         showPaywall = true
     }
 

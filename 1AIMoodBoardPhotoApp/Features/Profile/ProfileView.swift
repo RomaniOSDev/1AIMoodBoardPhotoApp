@@ -18,7 +18,6 @@ struct ProfileView: View {
     @State private var showResetConfirmation = false
 
     private var storeKit: StoreKitManager { dependencies.storeKitManager }
-    private var freeTrial: FreeTrialAccess { dependencies.freeTrialAccess }
 
     var body: some View {
         ZStack {
@@ -54,7 +53,7 @@ struct ProfileView: View {
                         }
                         .padding(.bottom, 6)
 
-                        if !storeKit.isSubscribed {
+                        if !storeKit.isSubscribed || !dependencies.canGeneratePhoto {
                             Button {
                                 showPaywall = true
                             } label: {
@@ -115,13 +114,11 @@ struct ProfileView: View {
                             Text("\(libraryPhotoCount)")
                                 .foregroundStyle(.secondary)
                         }
-                        if !storeKit.isSubscribed, freeTrial.isActive {
-                            HStack {
-                                Text(L10n.Profile.freeTrialLabel)
-                                Spacer()
-                                Text(L10n.Subscription.freeTrialDaysFormat(freeTrial.daysRemaining))
-                                    .foregroundStyle(.secondary)
-                            }
+                        HStack {
+                            Text(L10n.Profile.generationsRemaining)
+                            Spacer()
+                            Text("\(dependencies.remainingGenerations)")
+                                .foregroundStyle(.secondary)
                         }
                     }
 
@@ -203,8 +200,7 @@ struct ProfileView: View {
             .fullScreenCover(isPresented: $showPaywall) {
                 PaywallView(
                     storeKit: dependencies.storeKitManager,
-                    onSubscribed: { showPaywall = false },
-                    onLimitedAccess: { showPaywall = false }
+                    onSubscribed: { showPaywall = false }
                 )
                 .environmentObject(dependencies)
             }
@@ -215,9 +211,13 @@ struct ProfileView: View {
     }
 
     private var subscriptionStatusTitle: String {
-        storeKit.isSubscribed
-            ? L10n.Profile.subscriptionActive
-            : L10n.Profile.freeTrialStatus(days: freeTrial.daysRemaining, active: freeTrial.isActive)
+        if storeKit.isSubscribed {
+            if storeKit.isInIntroOfferPeriod {
+                return L10n.Profile.subscriptionTrial
+            }
+            return L10n.Profile.subscriptionActive
+        }
+        return L10n.Profile.subscriptionInactive
     }
 
     private func openURL(_ value: String) {

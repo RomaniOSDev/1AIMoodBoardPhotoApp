@@ -11,15 +11,15 @@ import Combine
 final class AppDependencies: ObservableObject {
     let persistence: PersistenceController
     let storeKitManager: StoreKitManager
-    let freeTrialAccess: FreeTrialAccess
+    let generationCredits: GenerationCredits
     let aiService: AIService
 
     private var cancellables = Set<AnyCancellable>()
 
     init() {
         persistence = PersistenceController.shared
-        storeKitManager = StoreKitManager()
-        freeTrialAccess = FreeTrialAccess.shared
+        generationCredits = GenerationCredits.shared
+        storeKitManager = StoreKitManager(credits: generationCredits)
         aiService = AIService(mode: Constants.aiUseLiveNetwork ? .live : .mock)
 
         storeKitManager.objectWillChange
@@ -27,7 +27,7 @@ final class AppDependencies: ObservableObject {
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
 
-        freeTrialAccess.objectWillChange
+        generationCredits.objectWillChange
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.objectWillChange.send() }
             .store(in: &cancellables)
@@ -38,22 +38,37 @@ final class AppDependencies: ObservableObject {
     }
 
     var canGeneratePhoto: Bool {
-        storeKitManager.isSubscribed || freeTrialAccess.isActive
+        generationCredits.canGenerate(
+            isSubscribed: storeKitManager.isSubscribed,
+            isInIntroOffer: storeKitManager.isInIntroOfferPeriod
+        )
+    }
+
+    var remainingGenerations: Int {
+        generationCredits.remainingCredits(
+            isSubscribed: storeKitManager.isSubscribed,
+            isInIntroOffer: storeKitManager.isInIntroOfferPeriod
+        )
     }
 
     func reserveGeneration() throws {
-        if storeKitManager.isSubscribed { return }
-        if freeTrialAccess.isActive { return }
-        throw FreeTrialError.notActive
+        // Soft check only — actual debit happens after a successful generation.
+        guard canGeneratePhoto else {
+            throw GenerationCreditError.noCredits
+        }
     }
 
     func refundReservedGeneration() {}
 
     func confirmSuccessfulGeneration() {
-        if storeKitManager.isSubscribed {
-            print("[AppDependencies] premium generation")
-        } else if freeTrialAccess.isActive {
-            print("[AppDependencies] free trial generation")
+        do {
+            try generationCredits.consume(
+                isSubscribed: storeKitManager.isSubscribed,
+                isInIntroOffer: storeKitManager.isInIntroOfferPeriod
+            )
+            print("[AppDependencies] generation consumed, remaining=\(remainingGenerations)")
+        } catch {
+            print("[AppDependencies] consume failed: \(error)")
         }
     }
 }

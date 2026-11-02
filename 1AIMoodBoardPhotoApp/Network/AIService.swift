@@ -45,39 +45,93 @@ actor AIService {
 
     func uploadImage(data: Data, filename: String = "image.jpg") async throws -> String {
         try validateAPIKeyForLive()
-        print("[AIService] uploadImage start bytes=\(data.count) mode=\(mode)")
+        print("[AIService] uploadImage start bytes=\(data.count) mode=\(mode) filename=\(filename)")
 
         switch mode {
         case .mock:
             return "https://mock.local/\(filename)"
         case .live:
-            let boundary = "Boundary-\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))"
-            let responseData = try await http.uploadMultipart(
-                url: Endpoints.uploadBinary,
-                fieldName: "file",
-                filename: filename,
-                mimeType: "image/jpeg",
-                data: data,
-                boundary: boundary
-            )
-            let decoder = JSONDecoder()
-            let decoded: UploadBinaryResponse
+            // Preferred WaveSpeed flow: small JSON ticket on api.wavespeed.ai, then PUT bytes
+            // to signed storage URL (avoids gateway stall on /media/upload/binary).
             do {
-                decoded = try decoder.decode(UploadBinaryResponse.self, from: responseData)
+                let url = try await uploadViaDirectTicket(data: data, filename: filename)
+                print("[AIService] upload ok (direct) url=\(url.prefix(80))...")
+                return url
             } catch {
-                print("[AIService] upload decode failed: \(error). Raw: \(String(data: responseData.prefix(2000), encoding: .utf8) ?? "")")
-                throw error
+                print("[AIService] direct upload failed → legacy binary fallback. error=\(error)")
+                let url = try await uploadViaLegacyBinary(data: data, filename: filename)
+                print("[AIService] upload ok (legacy) url=\(url.prefix(80))...")
+                return url
             }
-            if let code = decoded.code, code != 200 {
-                print("[AIService] upload non-200 body code=\(code) message=\(decoded.message ?? "")")
-                throw AIError.invalidResponse(statusCode: code, body: decoded.message)
-            }
-            guard let url = Optional(decoded.data.downloadURL), !url.isEmpty else {
-                throw AIError.missingDownloadURL
-            }
-            print("[AIService] upload ok url=\(url.prefix(80))...")
-            return url
         }
+    }
+
+    /// POST /media/uploads → PUT signed URL → return download_url.
+    private func uploadViaDirectTicket(data: Data, filename: String) async throws -> String {
+        let mime = filename.lowercased().hasSuffix(".png") ? "image/png" : "image/jpeg"
+        let ticketBody = CreateUploadTicketRequest(
+            filename: filename,
+            size: data.count,
+            contentType: mime
+        )
+        print("[AIService][UPLOAD] step=TICKET POST \(Endpoints.mediaUploads.absoluteString) size=\(data.count) mime=\(mime)")
+        let ticketStarted = Date()
+        let respData = try await http.postJSONData(url: Endpoints.mediaUploads, body: ticketBody)
+        print("[AIService][UPLOAD] step=TICKET response bytes=\(respData.count) in \(String(format: "%.2f", Date().timeIntervalSince(ticketStarted)))s bodyPrefix=\(String(data: respData.prefix(300), encoding: .utf8) ?? "<bin>")")
+
+        let decoded: CreateUploadTicketResponse
+        do {
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            decoded = try decoder.decode(CreateUploadTicketResponse.self, from: respData)
+        } catch {
+            print("[AIService][UPLOAD] ticket decode failed: \(error)")
+            throw AIError.decodingFailed(error.localizedDescription)
+        }
+        if let code = decoded.code, code != 200 {
+            throw AIError.invalidResponse(statusCode: code, body: decoded.message)
+        }
+
+        let downloadURL = decoded.data.downloadUrl
+        guard !downloadURL.isEmpty else { throw AIError.missingDownloadURL }
+        guard let putURL = URL(string: decoded.data.upload.url) else {
+            throw AIError.invalidURL
+        }
+        let method = (decoded.data.upload.method ?? "PUT").uppercased()
+        guard method == "PUT" else {
+            throw AIError.mockFailure("Unsupported upload method: \(method)")
+        }
+        let headers = decoded.data.upload.headers ?? [:]
+        print("[AIService][UPLOAD] step=PUT host=\(putURL.host ?? "?") headers=\(headers.keys.sorted())")
+        try await http.putRawBytes(url: putURL, data: data, headers: headers)
+        print("[AIService][UPLOAD] step=PUT done download_url prefix=\(downloadURL.prefix(60))…")
+        return downloadURL
+    }
+
+    /// Legacy POST /media/upload/binary (multipart through API gateway).
+    private func uploadViaLegacyBinary(data: Data, filename: String) async throws -> String {
+        let boundary = "Boundary-\(UUID().uuidString.replacingOccurrences(of: "-", with: ""))"
+        print("[AIService][UPLOAD] step=LEGACY multipart → \(Endpoints.uploadBinary.absoluteString)")
+        let responseData = try await http.uploadMultipart(
+            url: Endpoints.uploadBinary,
+            fieldName: "file",
+            filename: filename,
+            mimeType: "image/jpeg",
+            data: data,
+            boundary: boundary
+        )
+        let decoded: UploadBinaryResponse
+        do {
+            decoded = try JSONDecoder().decode(UploadBinaryResponse.self, from: responseData)
+        } catch {
+            print("[AIService] legacy upload decode failed: \(error). Raw: \(String(data: responseData.prefix(2000), encoding: .utf8) ?? "")")
+            throw error
+        }
+        if let code = decoded.code, code != 200 {
+            throw AIError.invalidResponse(statusCode: code, body: decoded.message)
+        }
+        guard !decoded.data.downloadURL.isEmpty else { throw AIError.missingDownloadURL }
+        return decoded.data.downloadURL
     }
 
     struct SubmitEditOutcome: Sendable {
@@ -131,6 +185,7 @@ actor AIService {
                 throw AIError.mockFailure(L10n.Ai.missingPollURL)
             }
             for attempt in 1 ... Constants.maxPollAttempts {
+                print("[AIService] poll attempt=\(attempt)/\(Constants.maxPollAttempts) requesting…")
                 let data = try await http.getAuthorizedData(url: pollURL)
 
                 if let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
@@ -143,7 +198,14 @@ actor AIService {
                     print("[AIService] poll parse failed body=\(String(data: data.prefix(800), encoding: .utf8) ?? "")")
                     throw AIError.decodingFailed("poll response")
                 }
-                print("[AIService] poll attempt=\(attempt) status=\(snapshot.status) outputs=\(snapshot.outputs.count)")
+                let first = snapshot.outputs.first ?? ""
+                let firstKind: String = {
+                    if first.hasPrefix("http") { return "url" }
+                    if first.hasPrefix("data:image") { return "data-uri" }
+                    if first.count > 200 { return "base64(~\(first.count)chars)" }
+                    return first.isEmpty ? "—" : "short"
+                }()
+                print("[AIService] poll attempt=\(attempt) status=\(snapshot.status) outputs=\(snapshot.outputs.count) kind=\(firstKind) bodyBytes=\(data.count)")
                 // Non-linear progress: reaches ~80% around 10-12 attempts (typical), then slows down.
                 let eased = 1.0 - exp(-Double(attempt) / 4.0)
                 let pollProgress = 0.30 + eased * 0.58
@@ -155,12 +217,11 @@ actor AIService {
                 }
 
                 switch snapshot.status.lowercased() {
-                case "completed", "succeeded", "success":
-                    try await Task.sleep(nanoseconds: Constants.pollIntervalSeconds * 1_000_000_000)
                 case "failed", "error", "canceled", "cancelled":
                     let detail = snapshot.errorMessage ?? snapshot.status
                     throw AIError.predictionFailed(detail)
                 default:
+                    print("[AIService] poll sleep \(Constants.pollIntervalSeconds)s (status=\(snapshot.status))")
                     try await Task.sleep(nanoseconds: Constants.pollIntervalSeconds * 1_000_000_000)
                 }
             }
@@ -191,7 +252,7 @@ actor AIService {
         guard let remoteURL = URL(string: trimmed) else {
             throw AIError.decodingFailed("Invalid output URL/data URI")
         }
-        print("[AIService] downloadImage url=\(remoteURL.absoluteString.prefix(60))...")
+        print("[AIService] downloadImage url=\(remoteURL.absoluteString.prefix(80))… host=\(remoteURL.host ?? "?")")
         switch mode {
         case .mock:
             return try mockPNGData()
@@ -199,9 +260,15 @@ actor AIService {
             if remoteURL.scheme == "https", remoteURL.host == "mock.local" {
                 return try mockPNGData()
             }
-            let data = try await http.getPublicBinary(url: remoteURL)
-            print("[AIService] downloadImage ok bytes=\(data.count)")
-            return data
+            do {
+                let data = try await http.getPublicBinary(url: remoteURL)
+                print("[AIService] downloadImage ok bytes=\(data.count)")
+                return data
+            } catch {
+                // CloudFront / S3 often blocked or stalled from some regions (e.g. RU).
+                print("[AIService] downloadImage CDN FAILED host=\(remoteURL.host ?? "?") error=\(error)")
+                throw AIError.network(error)
+            }
         }
     }
 
@@ -220,26 +287,73 @@ actor AIService {
             throw AIError.mockFailure(L10n.Ai.validationPresetOrPrompt)
         }
 
+        let pipelineStarted = Date()
         let styleName = stylePreset?.rawValue ?? "none"
-        print("[AIService] generateShoot mode=\(mode) style=\(styleName) customPrompt=\(!trimmedPrompt.isEmpty)")
+        print("[AIService][PIPELINE] ===== START mode=\(mode) style=\(styleName) customPrompt=\(!trimmedPrompt.isEmpty) =====")
         onProgress?(GenerationProgress(value: 0.06, label: L10n.Progress.preparing))
 
+        // 1) Prepare JPEG
+        let prepareStarted = Date()
         let prompt = Self.buildPrompt(stylePreset: stylePreset, customPrompt: trimmedPrompt)
         let selfieData = try preparedJPEGData(from: selfieImages[0])
+        print("[AIService][PIPELINE] step=PREPARE jpegBytes=\(selfieData.count) promptChars=\(prompt.count) in \(String(format: "%.2f", Date().timeIntervalSince(prepareStarted)))s")
+
+        // 2) Upload
+        let uploadStarted = Date()
+        print("[AIService][PIPELINE] step=UPLOAD begin → direct \(Endpoints.mediaUploads.absoluteString) (fallback \(Endpoints.uploadBinary.lastPathComponent))")
         let uploadItems: [(String, Data)] = [("selfie", selfieData)]
-        let uploadedURLs = try await uploadAllParallel(items: uploadItems)
+        let uploadedURLs: [String]
+        do {
+            uploadedURLs = try await uploadAllParallel(items: uploadItems)
+            print("[AIService][PIPELINE] step=UPLOAD ok urls=\(uploadedURLs.count) in \(String(format: "%.2f", Date().timeIntervalSince(uploadStarted)))s")
+        } catch {
+            print("[AIService][PIPELINE] step=UPLOAD FAILED after \(String(format: "%.2f", Date().timeIntervalSince(uploadStarted)))s error=\(error)")
+            throw error
+        }
         onProgress?(GenerationProgress(value: 0.22, label: L10n.Progress.uploaded))
 
-        let submitOutcome = try await submitEdit(imageURLs: uploadedURLs, prompt: prompt)
+        // 3) Submit edit
+        let submitStarted = Date()
+        print("[AIService][PIPELINE] step=SUBMIT begin → \(Endpoints.imageEdit().absoluteString)")
+        let submitOutcome: SubmitEditOutcome
+        do {
+            submitOutcome = try await submitEdit(imageURLs: uploadedURLs, prompt: prompt)
+            print("[AIService][PIPELINE] step=SUBMIT ok taskID=\(submitOutcome.taskID) in \(String(format: "%.2f", Date().timeIntervalSince(submitStarted)))s")
+        } catch {
+            print("[AIService][PIPELINE] step=SUBMIT FAILED after \(String(format: "%.2f", Date().timeIntervalSince(submitStarted)))s error=\(error)")
+            throw error
+        }
         onProgress?(GenerationProgress(value: 0.30, label: L10n.Progress.queued))
-        let output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL, onProgress: onProgress)
+
+        // 4) Poll
+        let pollStarted = Date()
+        print("[AIService][PIPELINE] step=POLL begin taskID=\(submitOutcome.taskID)")
+        let output: String
+        do {
+            output = try await pollForResult(taskID: submitOutcome.taskID, resultPollURL: submitOutcome.resultPollURL, onProgress: onProgress)
+            print("[AIService][PIPELINE] step=POLL ok outputPrefix=\(output.prefix(80))… in \(String(format: "%.2f", Date().timeIntervalSince(pollStarted)))s")
+        } catch {
+            print("[AIService][PIPELINE] step=POLL FAILED after \(String(format: "%.2f", Date().timeIntervalSince(pollStarted)))s error=\(error)")
+            throw error
+        }
         onProgress?(GenerationProgress(value: 0.94, label: L10n.Progress.downloading))
-        let imageData = try await downloadImage(from: output)
+
+        // 5) Download / decode output
+        let downloadStarted = Date()
+        print("[AIService][PIPELINE] step=DOWNLOAD begin")
+        let imageData: Data
+        do {
+            imageData = try await downloadImage(from: output)
+            print("[AIService][PIPELINE] step=DOWNLOAD ok bytes=\(imageData.count) in \(String(format: "%.2f", Date().timeIntervalSince(downloadStarted)))s")
+        } catch {
+            print("[AIService][PIPELINE] step=DOWNLOAD FAILED after \(String(format: "%.2f", Date().timeIntervalSince(downloadStarted)))s error=\(error)")
+            throw error
+        }
 
         let localURL = documentsDirectory().appendingPathComponent("generated_\(UUID().uuidString).png")
         try imageData.write(to: localURL, options: .atomic)
         onProgress?(GenerationProgress(value: 1.0, label: L10n.Progress.done))
-        print("[AIService] generateShoot saved=\(localURL.path)")
+        print("[AIService][PIPELINE] ===== DONE total=\(String(format: "%.2f", Date().timeIntervalSince(pipelineStarted)))s path=\(localURL.path) =====")
         return localURL
     }
 

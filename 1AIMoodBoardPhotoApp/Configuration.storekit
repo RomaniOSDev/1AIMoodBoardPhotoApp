@@ -14,7 +14,21 @@
 
   ],
   "products" : [
-
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "GEN5PACK001",
+      "localizations" : [
+        {
+          "description" : "One-time pack of 5 AI photo generations.",
+          "displayName" : "5 Generations",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "generations_5",
+      "referenceName" : "5 Generations",
+      "type" : "Consumable"
+    }
   ],
   "settings" : {
     "_askToBuyEnabled" : false,
@@ -47,7 +61,7 @@
           ],
           "displayPrice" : "5.99",
           "familyShareable" : false,
-          "groupNumber" : 1,
+          "groupNumber" : 2,
           "internalID" : "WEEKLY_TRIAL001",
           "introductoryOffer" : {
             "internalID" : "WEEKLY_TRIAL_INTRO",
@@ -57,12 +71,12 @@
           },
           "localizations" : [
             {
-              "description" : "Weekly access with a 3-day free trial.",
+              "description" : "Weekly access. 3-day free trial includes 1 generation, then 13 per week.",
               "displayName" : "Weekly Premium Trial",
               "locale" : "en_US"
             }
           ],
-          "productID" : "weekly_premium_trial",
+          "productID" : "weekly_premium",
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "Weekly Premium Trial",
           "subscriptionGroupID" : "premium_weekly",
@@ -81,18 +95,18 @@
           "displayPrice" : "5.99",
           "familyShareable" : false,
           "groupNumber" : 1,
-          "internalID" : "WEEKLY_STD001",
+          "internalID" : "WEEKLY_NOW001",
           "introductoryOffer" : null,
           "localizations" : [
             {
-              "description" : "Weekly access, billed immediately.",
+              "description" : "Weekly access billed immediately. 13 generations per week.",
               "displayName" : "Weekly Premium",
               "locale" : "en_US"
             }
           ],
-          "productID" : "weekly_premium",
+          "productID" : "weekly_premium_now",
           "recurringSubscriptionPeriod" : "P1W",
-          "referenceName" : "Weekly Premium",
+          "referenceName" : "Weekly Premium Now",
           "subscriptionGroupID" : "premium_weekly",
           "type" : "RecurringSubscription",
           "winbackOffers" : [

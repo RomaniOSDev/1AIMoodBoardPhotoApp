@@ -16,19 +16,6 @@ final class ProfileViewModel: ObservableObject {
     @Published var showResetAlert = false
     @Published var resetMessage = ""
 
-    func purchase(dependencies: AppDependencies) async {
-        do {
-            try await dependencies.storeKitManager.purchase()
-        } catch let error as StoreError {
-            if case .userCancelled = error { return }
-            purchaseErrorMessage = error.localizedDescription ?? ""
-            showPurchaseError = true
-        } catch {
-            purchaseErrorMessage = error.localizedDescription
-            showPurchaseError = true
-        }
-    }
-
     func restore(dependencies: AppDependencies) async {
         do {
             try await dependencies.storeKitManager.restorePurchases()
@@ -51,7 +38,7 @@ final class ProfileViewModel: ObservableObject {
     func resetAllData(dependencies: AppDependencies, modelContext: ModelContext) async -> Bool {
         do {
             try dependencies.repository(context: modelContext).resetAllData()
-            dependencies.freeTrialAccess.reset()
+            dependencies.generationCredits.reset()
             AIProcessingConsent.reset()
             UserDefaults.standard.set(false, forKey: Constants.onboardingCompletedKey)
             resetMessage = L10n.Profile.resetDone

@@ -34,7 +34,7 @@
 		30E6652130174265009CFEAE /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664DC30174265009CFEAE /* ProfileView.swift */; };
 		30E6652230174265009CFEAE /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664DD30174265009CFEAE /* ProfileViewModel.swift */; };
 		30E6652330174265009CFEAE /* CustomButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E030174265009CFEAE /* CustomButtonView.swift */; };
-		30E6652430174265009CFEAE /* FreeTrialAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E230174265009CFEAE /* FreeTrialAccess.swift */; };
+		30E6652430174265009CFEAE /* GenerationCredits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E230174265009CFEAE /* GenerationCredits.swift */; };
 		30E6652530174265009CFEAE /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E330174265009CFEAE /* StoreKitManager.swift */; };
 		30E6652630174265009CFEAE /* APIResponses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E530174265009CFEAE /* APIResponses.swift */; };
 		30E6652730174265009CFEAE /* AIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E664E730174265009CFEAE /* AIService.swift */; };
@@ -96,7 +96,7 @@
 		30E664DC30174265009CFEAE /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		30E664DD30174265009CFEAE /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		30E664E030174265009CFEAE /* CustomButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButtonView.swift; sourceTree = "<group>"; };
-		30E664E230174265009CFEAE /* FreeTrialAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FreeTrialAccess.swift; sourceTree = "<group>"; };
+		30E664E230174265009CFEAE /* GenerationCredits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationCredits.swift; sourceTree = "<group>"; };
 		30E664E330174265009CFEAE /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		30E664E530174265009CFEAE /* APIResponses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIResponses.swift; sourceTree = "<group>"; };
 		30E664E730174265009CFEAE /* AIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIService.swift; sourceTree = "<group>"; };
@@ -275,7 +275,7 @@
 		30E664E430174265009CFEAE /* Monetization */ = {
 			isa = PBXGroup;
 			children = (
-				30E664E230174265009CFEAE /* FreeTrialAccess.swift */,
+				30E664E230174265009CFEAE /* GenerationCredits.swift */,
 				30E664E330174265009CFEAE /* StoreKitManager.swift */,
 			);
 			path = Monetization;
@@ -532,7 +532,7 @@
 				30E6652130174265009CFEAE /* ProfileView.swift in Sources */,
 				30E6652230174265009CFEAE /* ProfileViewModel.swift in Sources */,
 				30E6652330174265009CFEAE /* CustomButtonView.swift in Sources */,
-				30E6652430174265009CFEAE /* FreeTrialAccess.swift in Sources */,
+				30E6652430174265009CFEAE /* GenerationCredits.swift in Sources */,
 				30E6652530174265009CFEAE /* StoreKitManager.swift in Sources */,
 				30E6652630174265009CFEAE /* APIResponses.swift in Sources */,
 				30E6652730174265009CFEAE /* AIService.swift in Sources */,
@@ -692,7 +692,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hggf Pro - AI Photo Generator";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
@@ -707,7 +707,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -734,7 +734,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "AI Photo Generator. Aesthetic";
+				INFOPLIST_KEY_CFBundleDisplayName = "Hggf Pro - AI Photo Generator";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Mood Board saves generated photos to your library when you choose Save.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Mood Board needs access to your photo library to pick selfies for AI generation.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "We use tracking data to measure install campaigns and improve app performance.";
@@ -749,7 +749,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.3;
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nev.dghdt36kkw0l;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;

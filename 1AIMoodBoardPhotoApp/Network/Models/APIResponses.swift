@@ -5,7 +5,33 @@
 
 import Foundation
 
-// MARK: - Upload (POST /media/upload/binary)
+// MARK: - Upload ticket (POST /media/uploads) — preferred
+
+struct CreateUploadTicketRequest: Encodable {
+    let filename: String
+    let size: Int
+    let contentType: String?
+}
+
+struct CreateUploadTicketResponse: Decodable {
+    let code: Int?
+    let message: String?
+    let data: TicketData
+
+    struct TicketData: Decodable {
+        let downloadUrl: String
+        let upload: UploadInstructions
+    }
+
+    struct UploadInstructions: Decodable {
+        let method: String?
+        let url: String
+        let headers: [String: String]?
+        let expiresAt: String?
+    }
+}
+
+// MARK: - Upload (POST /media/upload/binary) — legacy fallback
 
 /// Matches WaveSpeed docs; live API may use camelCase or alternate keys — see `UploadData`.
 struct UploadBinaryResponse: Decodable {
@@ -68,11 +94,12 @@ struct ImageEditRequestBody: Encodable {
 
     static func shootRequest(imageURLs: [String], prompt: String) -> ImageEditRequestBody {
         ImageEditRequestBody(
-            // Avoid CDN download instability on some networks: receive image bytes directly in API response.
-            enableBase64Output: true,
+            // false: poll stays small (CDN URL). Large base64 via api.wavespeed.ai also stalls from RU.
+            // Image bytes are fetched afterward: direct CDN, then public image proxies if CDN is geo-blocked.
+            enableBase64Output: false,
             enableSyncMode: false,
             images: imageURLs,
-            outputFormat: "png",
+            outputFormat: "jpeg",
             prompt: prompt,
             aspectRatio: "9:16"
         )

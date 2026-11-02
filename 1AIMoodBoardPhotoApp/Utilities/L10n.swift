@@ -117,23 +117,13 @@ enum L10n {
         static var restoreDone: String { tr("profile.restore_done") }
         static var subscription: String { tr("profile.subscription") }
         static var subscriptionActive: String { tr("profile.subscription_active") }
-        static var subscriptionInactiveFormat: String { tr("profile.subscription_inactive") }
+        static var subscriptionTrial: String { tr("profile.subscription_trial") }
+        static var subscriptionInactive: String { tr("profile.subscription_inactive") }
+        static var generationsRemaining: String { tr("profile.generations_remaining") }
         static var support: String { tr("profile.support") }
         static var terms: String { tr("profile.terms") }
         static var title: String { tr("profile.title") }
         static var upgradePremium: String { tr("profile.upgrade_premium") }
-        static var freeTrialLabel: String { tr("profile.free_trial_label") }
-
-        static func subscriptionInactive(remaining: Int) -> String {
-            String(format: subscriptionInactiveFormat, locale: .current, remaining)
-        }
-
-        static func freeTrialStatus(days: Int, active: Bool) -> String {
-            if active {
-                return String(format: tr("profile.free_trial_active"), locale: .current, days)
-            }
-            return tr("profile.free_trial_expired")
-        }
     }
 
     enum Paywall {
@@ -142,33 +132,45 @@ enum L10n {
         static var terms: String { tr("paywall.terms") }
         static var privacy: String { tr("paywall.privacy") }
         static var legalNote: String { tr("paywall.legal_note") }
-        static var freeTrialExpired: String { tr("paywall.free_trial_expired") }
         static var restoreNoSubscription: String { tr("paywall.restore_no_subscription") }
         static var reloadProducts: String { tr("paywall.reload_products") }
-        static var trialDisclosure: String { tr("paywall.trial_disclosure") }
         static var perWeekSuffix: String { tr("paywall.per_week_suffix") }
+        static var trialIncludesOneGeneration: String { tr("paywall.trial_includes_one_generation") }
+        static var waitTrialEndsHint: String { tr("paywall.wait_trial_ends_hint") }
+        static var packTitle: String { tr("paywall.pack_title") }
+        static var packSubtitle: String { tr("paywall.pack_subtitle") }
+        static var noCreditsLeft: String { tr("paywall.no_credits_left") }
+        static var trialPlanTitle: String { tr("paywall.trial_plan_title") }
+        static var paidPlanTitle: String { tr("paywall.paid_plan_title") }
 
-        static func trialPriceSubtitle(_ price: String) -> String {
-            String(format: tr("paywall.trial_price_subtitle_format"), locale: .current, price)
+        static func planSubtitle(_ price: String) -> String {
+            String(format: tr("paywall.plan_subtitle_format"), locale: .current, price)
         }
 
-        static func weekPriceSubtitle(_ price: String) -> String {
-            String(format: tr("paywall.week_price_subtitle_format"), locale: .current, price)
+        static func paidPlanSubtitle(_ price: String) -> String {
+            String(format: tr("paywall.paid_plan_subtitle_format"), locale: .current, price)
         }
 
-        static func subscribePriceCTA(_ price: String) -> String {
-            String(format: tr("paywall.subscribe_price_cta_format"), locale: .current, price)
+        static func startTrialCTA(_ price: String) -> String {
+            String(format: tr("paywall.start_trial_cta_format"), locale: .current, price)
+        }
+
+        static func subscribeNowCTA(_ price: String) -> String {
+            String(format: tr("paywall.subscribe_now_cta_format"), locale: .current, price)
+        }
+
+        static func buyPackCTA(_ price: String) -> String {
+            String(format: tr("paywall.buy_pack_cta_format"), locale: .current, price)
         }
     }
 
     enum Subscription {
         static var proBadge: String { tr("subscription.pro_badge") }
         static var upgradeA11y: String { tr("subscription.upgrade_a11y") }
-
         static var upgradeBadge: String { tr("subscription.upgrade_badge") }
 
-        static func freeTrialDaysFormat(_ days: Int) -> String {
-            String(format: tr("subscription.free_trial_days_format"), locale: .current, days)
+        static func remainingFormat(_ count: Int) -> String {
+            String(format: tr("subscription.remaining_format"), locale: .current, count)
         }
     }
 
@@ -251,13 +253,6 @@ enum L10n {
             static var b1: String { tr("onboard.page3.b1") }
             static var b2: String { tr("onboard.page3.b2") }
             static var b3: String { tr("onboard.page3.b3") }
-        }
-
-        enum Page4 {
-            static var title: String { tr("onboard.page4.title") }
-            static var b1: String { tr("onboard.page4.b1") }
-            static var b2: String { tr("onboard.page4.b2") }
-            static var b3: String { tr("onboard.page4.b3") }
         }
 
         static func pageAccessibility(current: Int, total: Int) -> String {

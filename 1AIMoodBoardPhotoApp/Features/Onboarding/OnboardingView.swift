@@ -35,12 +35,6 @@ struct OnboardingView: View {
                 assetName: "onboarding3",
                 title: L10n.Onboard.Page3.title,
                 bullets: [L10n.Onboard.Page3.b1, L10n.Onboard.Page3.b2, L10n.Onboard.Page3.b3]
-            ),
-            OnboardingPageModel(
-                id: 3,
-                assetName: "onboarding1",
-                title: L10n.Onboard.Page4.title,
-                bullets: [L10n.Onboard.Page4.b1, L10n.Onboard.Page4.b2, L10n.Onboard.Page4.b3]
             )
         ]
     }

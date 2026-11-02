@@ -127,7 +127,7 @@ struct GalleryResultView: View {
 
     private func completeFlowFromResult() {
         onDone()
-        guard !dependencies.storeKitManager.isSubscribed, !dependencies.canGeneratePhoto else { return }
+        guard !dependencies.canGeneratePhoto else { return }
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: AppEvents.showPaywall, object: nil)
         }

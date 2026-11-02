@@ -2692,74 +2692,6 @@
         }
       }
     },
-    "paywall.trial_price_subtitle_format": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3-day free trial, then %@/week. Cancel anytime."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 дня бесплатно, затем %@/нед. Отмена в любой момент."
-          }
-        }
-      }
-    },
-    "paywall.week_price_subtitle_format": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@/week. Cancel anytime."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@/нед. Отмена в любой момент."
-          }
-        }
-      }
-    },
-    "paywall.subscribe_price_cta_format": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Subscribe — %@/week"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подписаться — %@/нед."
-          }
-        }
-      }
-    },
-    "paywall.trial_disclosure": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 days free, then billed weekly"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 дня бесплатно, затем еженедельное списание"
-          }
-        }
-      }
-    },
     "paywall.per_week_suffix": {
       "extractionState": "manual",
       "localizations": {
@@ -2834,30 +2766,13 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Subscription renews weekly unless canceled at least 24 hours before the end of the period. Manage in Apple ID settings."
+            "value": "3-day free trial includes 1 generation. After payment: 13 generations per week. Subscription renews weekly unless canceled at least 24 hours before the end of the period. Manage in Apple ID settings. Generation packs are consumable and do not restore."
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Подписка продлевается еженедельно, если не отменить минимум за 24 часа до конца периода. Управление — в настройках Apple ID."
-          }
-        }
-      }
-    },
-    "paywall.free_trial_expired": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Your 3-day free access has ended. Subscribe for unlimited generations."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "3 дня бесплатного доступа закончились. Оформите подписку для безлимитных генераций."
+            "value": "3-дневный пробный период включает 1 генерацию. После оплаты: 13 генераций в неделю. Подписка продлевается еженедельно, если не отменить минимум за 24 часа до конца периода. Управление — в настройках Apple ID. Пакеты генераций расходуемые и не восстанавливаются."
           }
         }
       }
@@ -2909,23 +2824,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "PRO"
-          }
-        }
-      }
-    },
-    "subscription.free_trial_days_format": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lldd free"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Бесплатно %lld д."
           }
         }
       }
@@ -2998,57 +2896,6 @@
         }
       }
     },
-    "profile.free_trial_label": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Free trial"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Бесплатный период"
-          }
-        }
-      }
-    },
-    "profile.free_trial_active": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unlimited — %lld days left"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Безлимит — осталось %lld дн."
-          }
-        }
-      }
-    },
-    "profile.free_trial_expired": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Free trial ended — subscribe for unlimited access"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Бесплатный период закончился — оформите подписку"
-          }
-        }
-      }
-    },
     "profile.subscription_inactive": {
       "extractionState": "manual",
       "localizations": {
@@ -3061,7 +2908,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Подписка не активна"
+            "value": "Нет активной подписки"
           }
         }
       }
@@ -3130,6 +2977,261 @@
           "stringUnit": {
             "state": "translated",
             "value": "Неизвестный результат покупки."
+          }
+        }
+      }
+    },
+    "paywall.plan_subtitle_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3-day free trial with 1 generation, then %@/week for 13 generations. Cancel anytime."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 дня бесплатно с 1 генерацией, затем %@/нед. — 13 генераций. Отмена в любой момент."
+          }
+        }
+      }
+    },
+    "paywall.start_trial_cta_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start 3-day free trial — %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Начать 3 дня бесплатно — %@"
+          }
+        }
+      }
+    },
+    "paywall.subscribe_now_cta_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Subscribe now — %@/week"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оформить сейчас — %@/нед."
+          }
+        }
+      }
+    },
+    "paywall.buy_pack_cta_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buy 5 generations — %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Купить 5 генераций — %@"
+          }
+        }
+      }
+    },
+    "paywall.trial_includes_one_generation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trial includes 1 free generation"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В триале доступна 1 бесплатная генерация"
+          }
+        }
+      }
+    },
+    "paywall.wait_trial_ends_hint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Or wait until the 3-day trial ends — then weekly billing unlocks 13 generations."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Или дождитесь конца 3-дневного триала — после оплаты будет 13 генераций в неделю."
+          }
+        }
+      }
+    },
+    "paywall.pack_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "5 generations pack"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пакет 5 генераций"
+          }
+        }
+      }
+    },
+    "paywall.pack_subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "One-time purchase. Use anytime."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Разовая покупка. Можно использовать в любой момент."
+          }
+        }
+      }
+    },
+    "paywall.no_credits_left": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No generations left. Subscribe, wait for the next period, or buy a pack."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Генерации закончились. Оформите подписку, дождитесь нового периода или купите пакет."
+          }
+        }
+      }
+    },
+    "subscription.remaining_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%d left"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ещё %d"
+          }
+        }
+      }
+    },
+    "profile.subscription_trial": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Free trial active"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пробный период"
+          }
+        }
+      }
+    },
+    "profile.generations_remaining": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generations left"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Осталось генераций"
+          }
+        }
+      }
+    },
+    "paywall.trial_plan_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3-day free trial"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 дня бесплатно"
+          }
+        }
+      }
+    },
+    "paywall.paid_plan_title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Weekly subscription"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Недельная подписка"
+          }
+        }
+      }
+    },
+    "paywall.paid_plan_subtitle_format": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/week · 13 generations. Billed immediately."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@/нед. · 13 генераций. Оплата сразу."
           }
         }
       }
